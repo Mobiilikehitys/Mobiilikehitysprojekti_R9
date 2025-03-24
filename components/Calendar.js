@@ -22,7 +22,7 @@ export default function Calendar (){
         const weekMonday = today.setDate(today.getDate() - getDay)
         const weekSunday = weekMonday.setDate(weekMonday.getDate() + 6)
 
-        
+
 
         
 
@@ -40,6 +40,8 @@ export default function Calendar (){
         return timeList
     }
 
+    const timeList=times()
+
     const renderItem = ({item}) => {
         <View style={styles.cell}>
             
@@ -50,7 +52,7 @@ export default function Calendar (){
         <View style={styles.container}>
             <View style={styles.clockColumn}>
                 <Text style={styles.header}>Kello</Text>
-                {times.map((time) => (
+                {timeList.map((time) => (
                     <View key={time} style={styles.cell}>
                         <Text>{time}</Text>
                     </View>
