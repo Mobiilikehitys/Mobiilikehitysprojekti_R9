@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import Calendar from './components/Calendar';
+import Calendar from './calendar/Calendar';
 
 export default function App() {
   return (

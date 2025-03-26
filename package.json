@@ -4,17 +4,21 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-picker/picker": "^2.11.0",
     "expo": "~52.0.40",
     "expo-status-bar": "~2.0.1",
     "react": "18.3.1",
     "react-native": "0.76.7",
     "react-native-canvas": "^0.1.40",
+    "react-native-date-picker": "^5.0.11",
+    "react-native-paper": "^5.13.1",
+    "react-native-ui-datepicker": "^3.1.2",
     "react-native-webview": "^13.13.4"
   },
   "devDependencies": {
