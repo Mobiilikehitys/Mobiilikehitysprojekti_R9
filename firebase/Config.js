@@ -11,7 +11,7 @@ import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
 
 
 // Your web app's Firebase configuration
-
+/*
 const firebaseConfig = {
 
   apiKey: "",
@@ -42,3 +42,6 @@ export {
     signInWithEmailAndPassword,
     auth,
 };
+*/
+
+
