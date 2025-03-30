@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Button, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 import { getAuth, signInWithEmailAndPassword} from "../firebase/Config.js";
+import { useNavigation } from "@react-navigation/native";
 
 
 export default function Login() {
-
+    const navigation = useNavigation();
     //const [isResident, setIsResident] = useState(false);
     //const [isCompany, setIsCompany] = useState(false);
     const [username, setUsername] = useState("test@foo.com");
@@ -15,6 +16,7 @@ export default function Login() {
 
         signInWithEmailAndPassword(auth, username, password)
         .then((userCredentials) => {
+          navigation.navigate("Aloitus")
             console.log('Login OK')
         }).catch((error) => {
             if (error.code === 'auth/invalid-credential') {
@@ -65,6 +67,10 @@ export default function Login() {
       <Text style={styles.footerText}>
         Oletko jo rekisteröitynyt? <Text style={styles.link}>Kirjaudu</Text>
       </Text>
+
+       
+      
+
     </View>
   );
 };
