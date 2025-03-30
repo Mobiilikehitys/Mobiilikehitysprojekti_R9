@@ -1,9 +1,11 @@
-import { useNavigation } from '@react-navigation/native';
+import {  useNavigation, useRoute } from '@react-navigation/native';
 import { Appbar, Menu } from 'react-native-paper';
-import React, { useState } from 'react';
+import React, { useState} from 'react';
+
 
 export default function AppBar(){
     const navigation = useNavigation();
+    
     const [menuVisible, setMenuVisible] = useState(false);
 
     const openMenu = () => setMenuVisible(true)
@@ -23,6 +25,7 @@ export default function AppBar(){
                             navigation.navigate('Aloitus')
                         }}
                         title="Aloitus"
+                        
                         />
                     <Menu.Item
                         onPress={() => {
@@ -64,7 +67,7 @@ export default function AppBar(){
                             closeMenu()
                             navigation.navigate('Tiedot')
                         }}
-                        title="Tiedot"
+                        title="Omat tiedot"
                         />
                 </Menu>
         </Appbar.Header>

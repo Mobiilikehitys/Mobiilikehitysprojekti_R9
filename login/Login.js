@@ -16,6 +16,7 @@ export default function Login() {
 
         signInWithEmailAndPassword(auth, username, password)
         .then((userCredentials) => {
+          navigation.navigate("Aloitus")
             console.log('Login OK')
         }).catch((error) => {
             if (error.code === 'auth/invalid-credential') {
@@ -68,10 +69,7 @@ export default function Login() {
       </Text>
 
        
-       <Button
-        title="Temporary button"
-        onPress={() => navigation.navigate("Aloitus")} 
-      />
+      
 
     </View>
   );
