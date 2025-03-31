@@ -9,6 +9,7 @@ import Tiedot from './screens/Tiedot';
 import Talotiedot from './screens/Talotiedot';
 import Varauskalenteri from './screens/Varauskalenteri';
 import Login from './login/Login.js';
+import Register from './register/Register.js';
 import { NavigationContainer, useNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigationState } from '@react-navigation/native';
@@ -38,6 +39,7 @@ export default function App() {
         <NavigationContainer ref={navigationRef}>
           {currentRoute !== 'Login' && <AppBar />}
           <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Register" component={Register} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Aloitus" component={Aloitus} />
             <Stack.Screen name="Varauskalenteri" component={Varauskalenteri} />

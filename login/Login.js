@@ -31,7 +31,7 @@ export default function Login() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Rekisteröidy</Text>
+      <Text style={styles.title}>Kirjaudu sisään</Text>
       
       <Text style={styles.label}>Käyttäjätunnus</Text>
       <TextInput
@@ -61,11 +61,14 @@ export default function Login() {
       </View> */}
       
       <TouchableOpacity style={styles.button} onPress={signin}>
-        <Text style={styles.buttonText}>Jatka</Text>
+        <Text style={styles.buttonText}>Kirjaudu</Text>
       </TouchableOpacity>
       
       <Text style={styles.footerText}>
-        Oletko jo rekisteröitynyt? <Text style={styles.link}>Kirjaudu</Text>
+        Oletko uusi käyttäjä?{" "} 
+        <Text style={styles.link} onPress={() => navigation.navigate("Register")}>
+          Rekisteröidy
+        </Text>
       </Text>
 
        
