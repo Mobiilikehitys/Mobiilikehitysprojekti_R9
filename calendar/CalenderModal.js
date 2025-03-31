@@ -2,10 +2,13 @@ import React, {useState} from 'react';
 import {ScrollView, SafeAreaView, StyleSheet, Text, Pressable, View, Button, Modal, TextInput, TouchableOpacity} from 'react-native';
 import ResourcePicker from './ResourcePicker';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import reservation from './reservation';
+import useData from './useData';
+import dataToJSON from './dataToJSON';
 
 
 export default function CalendarModal ({resources, modalVisible, setModalVisible}) {
-    const [resource, setResource] = useState("Resurssi")
+    const [resource, setResource] = useState(resources[0])
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
     const [showStart, setShowStart] = useState(false)
@@ -17,6 +20,24 @@ export default function CalendarModal ({resources, modalVisible, setModalVisible
     const [clockEnd, setClockEnd] = useState(new Date())
     const [showClockStart, setShowClockStart] = useState(false)
     const [showClockEnd, setShowClockEnd] = useState(false)
+
+    const person = "AP"
+
+    const [reserSuccess, setReserSuccess] = useState("")
+
+    const data = useData()
+    let dataJSON = []
+    try{
+    
+    
+    if(data.length != 0){
+        dataJSON = dataToJSON({data})
+    }
+    }catch(error){
+        console.error("CalendarModal-dataJSON:",error)
+    }
+    console.log("CalendarModal-data:",data)
+    console.log("CalendarModal-dataJSON:",dataJSON)
 
     const onChangeStart = (event, selectedDate) => {
         const currentDate = selectedDate || startDate
@@ -42,20 +63,20 @@ export default function CalendarModal ({resources, modalVisible, setModalVisible
         setShowClockEnd(false)
     }
 
+    const closeModal = () => {
+        setModalVisible(false)
+        setReserSuccess("")
+    }
+
     
     return(
-            
+            <View style={styles.main}>
             <Modal
             transparent={true}
             style={styles.modal}
             animationType='slide'
-            visible={modalVisible}
-            onRequestClose={() => setModalVisible(false)}
-            onDismiss={() => setModalVisible(false)}>
-                <TouchableOpacity 
-            onPress={() => setModalVisible(false)}
-            activeOpacity={1}
-            style={styles.outModal}>
+            visible={modalVisible}>
+                
                 
             <View style={styles.modalView}>
              <View style={styles.headerView}> 
@@ -91,7 +112,7 @@ export default function CalendarModal ({resources, modalVisible, setModalVisible
 
             <View style={styles.TimeView}>
             <Pressable onPress={() => setShowClockStart(true)}>
-                <Text style={styles.text}>{"Aloitusaika: "}{clockStart.getHours().toString()+":"+clockStart.getMinutes().toString()}</Text>
+                <Text style={styles.text}>{"Aloitusaika: "}{clockStart.getHours().toString()+":"+clockStart.getMinutes().toString().padStart(2,"0")}</Text>
             </Pressable>
             </View>
             
@@ -121,22 +142,49 @@ export default function CalendarModal ({resources, modalVisible, setModalVisible
             />}
             <View style={styles.TimeView}>
             <Pressable onPress={() => setShowClockEnd(true)}>
-                <Text style={styles.text}>{"Lopetusaika: "}{clockEnd.getHours().toString()+":"+clockEnd.getMinutes().toString()}</Text>
+                <Text style={styles.text}>{"Lopetusaika: "}{clockEnd.getHours().toString()+":"+clockEnd.getMinutes().toString().padStart(2,"0")}</Text>
             </Pressable>
             </View>
-            <Button title="Varaa"></Button>
+            <View style={styles.infoTextView}>
+            <Text style={styles.infoText}>{reserSuccess}</Text>  
+            </View>
+
+            <View style={styles.buttons}>
+            <View style={styles.button}>
+            <Button title="Varaa"
+            onPress={() => {reservation({dataJSON, reserSuccess, setReserSuccess ,resource, person, startDate, clockStart, endDate, clockEnd})
+        }}/></View>
+            <View style={styles.button}>
+
+            <Button title="Sulje"
+            onPress={() => closeModal()}/>  </View></View>
             </View>
             
-            </TouchableOpacity>            
+                      
             </Modal>
-            
+            </View>
             
 
     )
 }
 
 const styles = StyleSheet.create({
-
+    buttons: {
+        flexDirection: 'row', // Asettaa napit vierekkäin
+    justifyContent: 'space-between', // Jättää tilaa nappien väliin
+    width: '100%', // Tämän avulla nappien leveys on optimaalinen
+    paddingHorizontal: 10, // Lisätään hieman tilaa nappien ympärille
+    },
+    button: {
+        flex: 1, // Takaa, että napit vievät yhtä paljon tilaa
+        marginHorizontal: 5, // Lisää hieman väliä nappien väliin
+    },
+    buttonSpacer: {
+        height: 30
+    },
+    main: {
+        
+    },
     TimeView: {
         marginBottom: 30,
         marginTop: 20
@@ -159,7 +207,9 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     outModal: {
-        flex: 1
+        flex: 1,
+        flexDirection:"row",
+        justifyContent: "center"
     },
     header: {
         fontSize: 20,
@@ -172,10 +222,9 @@ const styles = StyleSheet.create({
     modalView: {
         backgroundColor: "white",
         position: 'relative',
-        height: 500,
+        height: 600,
         width: 300,
-        top: 150,
-        left: 10,
+        top: 100,
         margin: 20,
         borderRadius: 20,
         padding: 35,

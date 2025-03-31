@@ -1,12 +1,15 @@
 import React, {useState} from 'react';
 import {ScrollView, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button, StatusBar, KeyboardAvoidingView} from 'react-native';
-import Canvas from 'react-native-canvas';
+import Canvas, {Path2D} from 'react-native-canvas';
 import timeToMinutes from './timeToMinutes';
 import ResourcePicker from './ResourcePicker';
 import TimeLabels from './TimeLabels';
 import CalendarModal from './CalenderModal';
 import {thisDay, thisDayByMinutes} from './thisDay';
-import AppBar from "../Navigation/Appbar"
+import useData from './useData';
+import dataToJSON from './dataToJSON';
+import { FlatList } from 'react-native';
+import DeleteModal from './DeleteModal';
 
 
 
@@ -18,19 +21,31 @@ export default function Calendar (){
     const testResources = [
         "Pyykkikone 1", "Pyykkikone 2"
     ]
-    const [resource, setResource] = useState("Resurssi")
+    const [resource, setResource] = useState(testResources[0])
     const [loadingState, setLoadingState] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
+    const [delModalVisible, setDelModalVisible] = useState(false)
+    
+    const data = useData()
+    console.log("data",data)
+    let dataJSON
+    if(data){
+        dataJSON = dataToJSON({data})
+        console.log("dataJSON: ", dataJSON)
+        
+    }
+    
+    
     const testReservations = [
         {
-            "Day":"26.3.2025",
+            "Day":"29.3.2025",
             "Resources": [
                 {   "Resource": "Pyykkikone 1",
                     "Reservations":[
                         {   
                             "Person":"AP",
-                            "Starting time": "12.00",
-                            "Ending time": "22.00"
+                            "Starting time": "12:00",
+                            "Ending time": "22:00"
                             
                         }
                     ]
@@ -58,7 +73,7 @@ export default function Calendar (){
         },
         
     ]
-    
+    console.log("TestReservations:", testReservations)
     const getNextDays = () => {
         const dayList = []
         const today= new Date()
@@ -100,26 +115,29 @@ export default function Calendar (){
 
     
 
-    const drawReservations = (canvas, day) => {
+    const drawReservations = async (canvas, day) => {
         const ctx = canvas.getContext('2d')
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
         canvas.width=canvasWidth
         canvas.height=canvasHeight
         
         
-        const reservationData = testReservations.find(reservation => reservation.Day === day)
-
+        
+        const reservationData = dataJSON.find(reservation => reservation.Day === day)
+        
+        
         ctx.strokeStyle = "gray";
+        ctx.lineWidth = 1;
         for(let i = 0; i < 24; i+=2){
-            ctx.beginPath()
-            ctx.moveTo(0,i*canvasHeight/24)
-            ctx.lineTo(canvasWidth,i*canvasHeight/24)
-            ctx.lineWidth = 1;
-            ctx.stroke()
+            let p = new Path2D(canvas);
+            p.moveTo(0,i*canvasHeight/24)
+            p.lineTo(canvasWidth,i*canvasHeight/24)
+            ctx.stroke(p)
         }
 
         if(reservationData){
         const resources = reservationData['Resources']
+        console.log("Main resources: ", reservationData)
         const reservations = resources.find(reservation => reservation.Resource == resource)
         if(reservations){
             console.log(reservations)
@@ -141,9 +159,14 @@ export default function Calendar (){
             console.log("end:",sizeHeight)
 
             ctx.fillStyle = "green"
-            ctx.fillRect(0,startHeight, canvas.width, sizeHeight)
+            let p = new Path2D(canvas)
+            p.rect(0, startHeight, canvasWidth, sizeHeight)
+            ctx.fill(p)
             ctx.fillStyle = "black"
             ctx.fillText(person, 10, startHeight+10)
+            if(endTime == "24:00"){
+                endTime= "23:59"
+            }
             ctx.fillText(startTime+"-"+endTime,10,startHeight+20)
 
         }
@@ -166,6 +189,45 @@ export default function Calendar (){
         
     }
 
+    const CanvasItem = ({ day }) => {
+        const handleCanvas = (canvas) => {
+          drawReservations(canvas, day.dayReservation)
+        }
+      
+        return (
+          <View style={styles.canvasItem}>
+            <View style={styles.spacer1}>
+            <View style={styles.dayHeaderView}>
+            <Text style={styles.dayHeaderText}>{day.dayHeader}</Text>
+            </View></View>
+            <Canvas ref={handleCanvas} />
+            <View style={styles.spacer2}/>
+          </View>
+        );
+      };
+
+    const RenderItem = (item) => {
+
+        return(
+        <View style={styles.RenderItem}>
+        <CanvasItem day={item}/>
+        </View>
+        )
+    }
+
+    const CanvasesFlatList = () => {
+        return(
+            <View style={styles.CanvasesFlatList}>
+            <FlatList
+            horizontal={true}
+            data={daysToShow}
+            renderItem={({item, index}) => RenderItem(item) }
+            keyExtractor={(item) => item.dayHeader}
+            contentContainerStyle={styles.flatlistContainer}
+            /></View>
+        )
+    }
+
     const Canvases = () => {
         return(
             <ScrollView style={styles.canvases}
@@ -176,7 +238,7 @@ export default function Calendar (){
                     <Text>{data.dayHeader}</Text>
                     </View>
                     <Canvas style={styles.canvas}
-                    ref={(canvas) => {
+                    ref={async (canvas) => {
                         if(canvas){
                             drawReservations(canvas, data.dayReservation)
                         }
@@ -205,19 +267,69 @@ export default function Calendar (){
             <TimeLabels/>
             <Canvases/>
             </View>
+            <View style={styles.buttonRow}>
             <View style={styles.buttonView}>
             <Button style={styles.button} title="Varaa aika"
             color= "green"
             onPress={() => setModalVisible(true)
             }/>
-            {loadingState && <Text>Loading...</Text>}
+            
             </View>
+            <View style={styles.buttonView}>
+            <Button style={styles.button} title="Poista aika" color="green" onPress={() => setDelModalVisible(true)}/></View></View>
+
             <CalendarModal resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+            <DeleteModal resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
             </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
+    buttonRow: {
+        flexDirection: 'row', // Asettaa napit vierekkäin
+    justifyContent: 'space-between', // Jättää tilaa nappien väliin // Tämän avulla nappien leveys on optimaalinen
+    paddingHorizontal: 0, // Lisätään hieman tilaa nappien ympärille
+    marginTop: 500
+    },
+    flatlistContainer: {
+
+    },
+    dayHeaderView: {
+        
+    },
+    dayHeaderText: {
+        fontSize: 15,
+        marginLeft: 15
+    },
+    spacer4: {
+        width:110,
+        backgroundColor: "grey"
+
+    },
+    spacer3: {
+        width:110,
+        backgroundColor: "grey"
+    },
+    spacer2: {
+        height: 10,
+        backgroundColor: "grey"
+    },
+    spacer1: {
+        marginTop: 60,
+        height: 40,
+        backgroundColor: "grey",
+        justifyContent: 'center'
+    },
+    CanvasesFlatList: {
+    },
+    renderItem: {
+        transform: [{ rotate: '90deg' }],
+        backgroundColor: "grey"
+        
+    },
+
+    canvasItem: {
+    },
     canvasesEnd: {
         width: 20,
 
@@ -262,11 +374,14 @@ const styles = StyleSheet.create({
         backgroundColor: "white",
     },
     buttonView: {
-        position: "absolute",
-        bottom: 100,
+        width: 140
 
 
     },
-   
+    
+   button: {
+        width: 70,
+        height: 100
+   }
     
   });
