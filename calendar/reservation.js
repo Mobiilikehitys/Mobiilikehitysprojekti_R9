@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, firestore, onSnapshot, RESERVATIONS } from "../firebase/Config";
+import { addDoc, collection, firestore, onSnapshot, RESERVATIONS, auth } from "../firebase/Config";
 import { useState } from "react";
 import useData from "./useData";
 import dataToJSON from "./dataToJSON";
@@ -36,6 +36,7 @@ export default function reservation({dataJSON, reserSuccess, setReserSuccess,res
 
     const save = async () => {
     const docRef = await addDoc(collection(firestore, RESERVATIONS), {
+        
         henkilo: person,
         resurssi: resource,
         aloituspaiva: startDateString ,

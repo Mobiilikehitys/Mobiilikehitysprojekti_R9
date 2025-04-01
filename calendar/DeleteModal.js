@@ -7,7 +7,7 @@ import reservation from "./reservation"
 import { firestore, RESERVATIONS } from "../firebase/Config"
 import Icon from 'react-native-vector-icons/FontAwesome'
 
-export default function DeleteModal({delModalVisible,setDelModalVisible, resources}){
+export default function DeleteModal({person, delModalVisible,setDelModalVisible, resources}){
     const [delSuccess, setDelSuccess] = useState("")
     const [resource, setResource] = useState(resources[0])
     const closeModal = () => {
@@ -16,7 +16,6 @@ export default function DeleteModal({delModalVisible,setDelModalVisible, resourc
     }
 
     const Reservations = useData()
-    const person = "AP"
     console.log("Reservations-deleteModal:", Reservations)
 
     const DeleteListScroll = () => {
@@ -74,7 +73,6 @@ export default function DeleteModal({delModalVisible,setDelModalVisible, resourc
             <Modal
             transparent={true}
             style={styles.modal}
-            animationType='slide'
             visible={delModalVisible}>
                 
             

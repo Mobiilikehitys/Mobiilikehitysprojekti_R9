@@ -14,8 +14,12 @@ import DeleteModal from './DeleteModal';
 
 
 
-export default function Calendar (){
-    
+
+
+
+
+export default function Calendar ({user}){
+
     const canvasHeight = 400
     const canvasWidth = 90
     const testResources = [
@@ -26,6 +30,8 @@ export default function Calendar (){
     const [modalVisible, setModalVisible] = useState(false)
     const [delModalVisible, setDelModalVisible] = useState(false)
     
+    
+
     const data = useData()
     console.log("data",data)
     let dataJSON
@@ -158,16 +164,25 @@ export default function Calendar (){
             console.log("start:",startHeight)
             console.log("end:",sizeHeight)
 
-            ctx.fillStyle = "green"
+            if(person == user){
+                ctx.fillStyle = "blue"
+            }else{
+                ctx.fillStyle = "yellow"
+            }
+            
             let p = new Path2D(canvas)
             p.rect(0, startHeight, canvasWidth, sizeHeight)
             ctx.fill(p)
             ctx.fillStyle = "black"
+            if(person == user){
             ctx.fillText(person, 10, startHeight+10)
             if(endTime == "24:00"){
                 endTime= "23:59"
             }
             ctx.fillText(startTime+"-"+endTime,10,startHeight+20)
+        }else{
+            ctx.fillText(startTime+"-"+endTime,10,startHeight+10)
+        }
 
         }
     }}
@@ -255,11 +270,13 @@ export default function Calendar (){
 
 
     return(
+
                 
                 <KeyboardAvoidingView
                 behavior={'height'}
                 style={styles.mainColumn}>
                 <StatusBar style="auto"/>
+                <Text>{"Käyttäjä: "}{user}</Text>
                 <View style={styles.resourcePicker}>
             <ResourcePicker resources={testResources} resource= {resource} setResource={setResource}/>
             </View>
@@ -277,19 +294,23 @@ export default function Calendar (){
             </View>
             <View style={styles.buttonView}>
             <Button style={styles.button} title="Poista aika" color="green" onPress={() => setDelModalVisible(true)}/></View></View>
-
-            <CalendarModal resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-            <DeleteModal resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
+            <View style={styles.modals}>
+            <CalendarModal person={user} resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+            <DeleteModal person={user} resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
+            </View>
             </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
+    modals :{
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
     buttonRow: {
-        flexDirection: 'row', // Asettaa napit vierekkäin
-    justifyContent: 'space-between', // Jättää tilaa nappien väliin // Tämän avulla nappien leveys on optimaalinen
-    paddingHorizontal: 0, // Lisätään hieman tilaa nappien ympärille
-    marginTop: 500
+        flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 570
     },
     flatlistContainer: {
 

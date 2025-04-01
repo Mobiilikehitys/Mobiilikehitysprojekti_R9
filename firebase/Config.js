@@ -1,21 +1,28 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, onSnapshot  } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCcAk5JyyDCJ4C_DUHlX9i_wKU3-6mYhXo",
-    authDomain: "taloyhtioapp.firebaseapp.com",
-    projectId: "taloyhtioapp",
-    storageBucket: "taloyhtioapp.firebasestorage.app",
-    messagingSenderId: "169187897372",
-    appId: "1:169187897372:web:2762ad10da8e3111376fd9"
-  };
+  apiKey: "AIzaSyBVX2zsw_u7V__CSFhDxPVn_tePmTxL6iw",
+  authDomain: "mobile-120f6.firebaseapp.com",
+  projectId: "mobile-120f6",
+  storageBucket: "mobile-120f6.firebasestorage.app",
+  messagingSenderId: "814590261084",
+  appId: "1:814590261084:web:3062436ebc44b39bde7399",
+  measurementId: "G-XP80D5H75B"
+};
 
   const app = initializeApp(firebaseConfig);
 
-  const firestore = getFirestore()
+  const auth = getAuth(app)
+  const firestore = getFirestore(app)
+
 
   const RESERVATIONS = 'reservations'
   const RESOURCES = 'resources'
+
+  
 
   export {
     firestore,
@@ -24,7 +31,12 @@ const firebaseConfig = {
     RESOURCES,
     query,
     onSnapshot,
-    addDoc
+    addDoc,
+    getAuth,
+    signInWithEmailAndPassword,
+    auth,
+    onAuthStateChanged
+
 
     
   }

@@ -11,7 +11,6 @@ export default function ResourcePicker({resources, resource, setResource}){
                     setResource(itemValue)
                 }
             >
-                <Picker.Item style={styles.item} label={"Resurssi"}/>
                 {resources.map((item, index) => 
                 <Picker.Item key={index} style={styles.item} label={item} value={item}/>
                 )}
