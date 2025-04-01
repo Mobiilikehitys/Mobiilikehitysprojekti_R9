@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, addDoc, query, onSnapshot  } from "firebase/firestore";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
 
 
 const firebaseConfig = {
@@ -35,7 +35,8 @@ const firebaseConfig = {
     getAuth,
     signInWithEmailAndPassword,
     auth,
-    onAuthStateChanged
+    onAuthStateChanged,
+    createUserWithEmailAndPassword
 
 
     
