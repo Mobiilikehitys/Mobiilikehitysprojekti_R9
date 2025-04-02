@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ScrollView, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button, StatusBar, KeyboardAvoidingView} from 'react-native';
+import {ScrollView, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button, StatusBar, KeyboardAvoidingView, FlatList } from 'react-native';
 import Canvas, {Path2D} from 'react-native-canvas';
 import timeToMinutes from './timeToMinutes';
 import ResourcePicker from './ResourcePicker';
@@ -8,10 +8,9 @@ import CalendarModal from './CalenderModal';
 import {thisDay, thisDayByMinutes} from './thisDay';
 import useData from './useData';
 import dataToJSON from './dataToJSON';
-import { FlatList } from 'react-native';
 import DeleteModal from './DeleteModal';
-
-
+import { RESERVATIONS } from '../firebase/Config';
+import { canvasHeight, canvasWidth, startMargin, topMargin, header, headerFont } from './CanvasSizes';
 
 
 
@@ -20,8 +19,7 @@ import DeleteModal from './DeleteModal';
 
 export default function Calendar ({user}){
 
-    const canvasHeight = 400
-    const canvasWidth = 90
+    
     const testResources = [
         "Pyykkikone 1", "Pyykkikone 2"
     ]
@@ -32,12 +30,10 @@ export default function Calendar ({user}){
     
     
 
-    const data = useData()
-    console.log("data",data)
+    const data = useData(RESERVATIONS)
     let dataJSON
     if(data){
         dataJSON = dataToJSON({data})
-        console.log("dataJSON: ", dataJSON)
         
     }
     
@@ -79,7 +75,6 @@ export default function Calendar ({user}){
         },
         
     ]
-    console.log("TestReservations:", testReservations)
     const getNextDays = () => {
         const dayList = []
         const today= new Date()
@@ -143,11 +138,9 @@ export default function Calendar ({user}){
 
         if(reservationData){
         const resources = reservationData['Resources']
-        console.log("Main resources: ", reservationData)
         const reservations = resources.find(reservation => reservation.Resource == resource)
         if(reservations){
-            console.log(reservations)
-            console.log(reservations.Reservations)
+            
         
         for(let a of reservations.Reservations){
             
@@ -156,13 +149,9 @@ export default function Calendar ({user}){
             let endTime = a['Ending time']
             let startMinutes = timeToMinutes(startTime)
             let endMinutes = timeToMinutes(endTime)
-            console.log("StartMinutes:",startMinutes)
-            console.log("EndMinutes:", endMinutes)
             let startHeight = canvasHeight*startMinutes/(24*60)
             let sizeHeight = canvasHeight*(endMinutes - startMinutes)/(24*60)
 
-            console.log("start:",startHeight)
-            console.log("end:",sizeHeight)
 
             if(person == user){
                 ctx.fillStyle = "blue"
@@ -187,10 +176,10 @@ export default function Calendar ({user}){
         }
     }}
         setLoadingState(false)
+
         if (day == thisDay()){
             ctx.strokeStyle = "red";
             const timeMinutes = thisDayByMinutes()
-            console.log(timeMinutes)
             ctx.beginPath()
             ctx.moveTo(0,canvasHeight*timeMinutes/(24*60))
             ctx.lineTo(canvasWidth, canvasHeight*timeMinutes/(24*60))
@@ -205,41 +194,46 @@ export default function Calendar ({user}){
     }
 
     const CanvasItem = ({ day }) => {
+
         const handleCanvas = (canvas) => {
-          drawReservations(canvas, day.dayReservation)
-        }
+          if(canvas){drawReservations(canvas, day.dayReservation)}
+          }
       
         return (
           <View style={styles.canvasItem}>
-            <View style={styles.spacer1}>
-            <View style={styles.dayHeaderView}>
-            <Text style={styles.dayHeaderText}>{day.dayHeader}</Text>
-            </View></View>
+            
             <Canvas ref={handleCanvas} />
-            <View style={styles.spacer2}/>
           </View>
         );
       };
 
-    const RenderItem = (item) => {
-
+    const RenderItem = ({item}) => {
         return(
-        <View style={styles.RenderItem}>
+        <View style={styles.renderItem}>
+        <View style={styles.spacer1}>
+            <Text>{item.dayHeader}</Text>
+        </View>
         <CanvasItem day={item}/>
+
         </View>
         )
     }
-
+   
     const CanvasesFlatList = () => {
         return(
-            <View style={styles.CanvasesFlatList}>
+            <View style={styles.cfl}>
             <FlatList
             horizontal={true}
             data={daysToShow}
-            renderItem={({item, index}) => RenderItem(item) }
+            renderItem={({ item }) => (
+                <RenderItem item={item}/>
+            )}
             keyExtractor={(item) => item.dayHeader}
-            contentContainerStyle={styles.flatlistContainer}
-            /></View>
+            ItemSeparatorComponent={<View style={styles.separator}
+            contentContainerStyle={styles.CanvasesFlatList}
+            />}
+            />
+                    <View style={styles.renderItemBottom}/></View>
         )
     }
 
@@ -250,8 +244,9 @@ export default function Calendar ({user}){
                 {daysToShow.map((data, index) =>(
                     <View key={index} style={styles.column}>
                     <View style={styles.day}>
-                    <Text>{data.dayHeader}</Text>
-                    </View>
+                    <View style={styles.columnCenterView}>
+                    <Text style={styles.dayHeaderText}>{data.dayHeader}</Text>
+                    </View></View>
                     <Canvas style={styles.canvas}
                     ref={async (canvas) => {
                         if(canvas){
@@ -275,7 +270,6 @@ export default function Calendar ({user}){
                 <KeyboardAvoidingView
                 behavior={'height'}
                 style={styles.mainColumn}>
-                <StatusBar style="auto"/>
                 <Text>{"Käyttäjä: "}{user}</Text>
                 <View style={styles.resourcePicker}>
             <ResourcePicker resources={testResources} resource= {resource} setResource={setResource}/>
@@ -283,6 +277,10 @@ export default function Calendar ({user}){
         <View style={styles.container}>   
             <TimeLabels/>
             <Canvases/>
+            </View>
+            <View style={styles.modals}>
+            <CalendarModal person={user} resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+            <DeleteModal person={user} resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
             </View>
             <View style={styles.buttonRow}>
             <View style={styles.buttonView}>
@@ -294,32 +292,57 @@ export default function Calendar ({user}){
             </View>
             <View style={styles.buttonView}>
             <Button style={styles.button} title="Poista aika" color="green" onPress={() => setDelModalVisible(true)}/></View></View>
-            <View style={styles.modals}>
-            <CalendarModal person={user} resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-            <DeleteModal person={user} resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
-            </View>
             </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
+    columnCenterView: {
+        flexDirection: "column",
+        justifyContent: "center"
+    },
+    centerView: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    renderItemBottom: {
+        backgroundColor: "grey",
+        height: 10
+    },
+    cfl: {
+        height: canvasHeight+70,
+        marginTop: 60,
+        width: "90%"
+    },
+    testiText: {
+        fontSize: 20
+    },
+    separator: {
+        backgroundColor: "grey",
+        width: 10
+    },
     modals :{
         flexDirection: 'row',
         justifyContent: 'center',
     },
     buttonRow: {
+        marginTop: canvasHeight+70,
         flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 570
+        justifyContent: 'space-between',
     },
     flatlistContainer: {
+        position: 'absolute',
+       width: 1000,
+       height: 1000,
+       top: 0,
+       left: 0
 
     },
     dayHeaderView: {
         
     },
     dayHeaderText: {
-        fontSize: 15,
+        fontSize: headerFont,
         marginLeft: 15
     },
     spacer4: {
@@ -336,32 +359,35 @@ const styles = StyleSheet.create({
         backgroundColor: "grey"
     },
     spacer1: {
-        marginTop: 60,
         height: 40,
         backgroundColor: "grey",
+        flexDirection: "row",
         justifyContent: 'center'
     },
     CanvasesFlatList: {
+        marginTop: 60,
+        height: 1000,
+        borderBottomRightRadius: 10,
+        borderTopRightRadius: 10
     },
     renderItem: {
-        transform: [{ rotate: '90deg' }],
-        backgroundColor: "grey"
-        
+        height: 1000,
     },
 
     canvasItem: {
+        height: 1000,
     },
     canvasesEnd: {
         width: 20,
 
     },
     resourcePicker: {
+        marginTop: 0
     },
     day: {
         flexDirection: "row",
         justifyContent: "center",
-        paddingTop: 10,
-        paddingBottom: 10
+        height: startMargin,
     },
     mainColumn: {
         flexDirection: "column",
@@ -370,7 +396,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: "row",
+        justifyContent: "center",
         width: 300,
+        height: 1000
         
     },
     column: {
@@ -381,17 +409,17 @@ const styles = StyleSheet.create({
     canvases: {
       flex: 1,
       flexDirection: "row",
-      marginTop: 60,
+      marginTop: topMargin,
       backgroundColor: "grey",
-      height: 450,
+      height: canvasHeight + 50,
       borderTopRightRadius: 20,
       borderBottomRightRadius: 20
         
 
     },
     canvas: {
-        width: 90,
-        height: 400,
+        width: canvasWidth,
+        height: canvasHeight,
         backgroundColor: "white",
     },
     buttonView: {

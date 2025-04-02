@@ -15,7 +15,7 @@ export default function DeleteModal({person, delModalVisible,setDelModalVisible,
         setDelSuccess("")
     }
 
-    const Reservations = useData()
+    const Reservations = useData(RESERVATIONS)
     console.log("Reservations-deleteModal:", Reservations)
 
     const DeleteListScroll = () => {

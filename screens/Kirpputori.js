@@ -1,11 +1,15 @@
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
+import FleaMarket from '../flea market/Market';
+import { auth } from '../firebase/Config';
 
 export default function Kirpputori() {
+    const user = auth.currentUser;
+
     return (
-<View style={styles.container}>
-<Text style={styles.title}>Kirpputori</Text>
-</View>
+        <View>
+        {user ? <FleaMarket user={user.email}/> : <Text>Sign in to see the flea market</Text>}
+        </View>
     )
 }
 

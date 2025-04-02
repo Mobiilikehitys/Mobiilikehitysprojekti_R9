@@ -1,24 +1,24 @@
 import { query, collection, firestore, onSnapshot, RESERVATIONS } from "../firebase/Config";
 import { useEffect, useState } from "react";
 
-function useData () {
-    const [reservations, setReservations] = useState([])
+function useData (target) {
+    const [data, setData] = useState([])
     useEffect(() => {
-        const q = query(collection(firestore, RESERVATIONS))
+        const q = query(collection(firestore, target))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const tempReservations = []
             querySnapshot.forEach((doc) => {
                 console.log(doc.id)
                 tempReservations.push({...doc.data(), id: doc.id})
             })
-            setReservations(tempReservations)
+            setData(tempReservations)
         })
         return () => {
             unsubscribe()
         }
     }, [])
 
-    return reservations
+    return data
 
 
 

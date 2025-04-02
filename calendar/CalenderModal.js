@@ -5,6 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import reservation from './reservation'
 import useData from './useData'
 import dataToJSON from './dataToJSON'
+import { RESERVATIONS } from '../firebase/Config'
 
 
 export default function CalendarModal ({person, resources, modalVisible, setModalVisible}) {
@@ -33,7 +34,7 @@ export default function CalendarModal ({person, resources, modalVisible, setModa
 
     const [reserSuccess, setReserSuccess] = useState(null)
   
-    const data = useData()
+    const data = useData(RESERVATIONS)
     let dataJSON = []
     try{
     

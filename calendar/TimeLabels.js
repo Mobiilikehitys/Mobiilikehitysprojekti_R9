@@ -1,8 +1,6 @@
 import React from "react"
 import { View, StyleSheet, Text } from "react-native"
-
-const canvasHeight = 400
-const canvasWidth = 90
+import { canvasHeight, canvasWidth, headerFont, startMargin, topMargin } from './CanvasSizes';
 
 export default function TimeLabels(){
     const list = []
@@ -25,9 +23,9 @@ export default function TimeLabels(){
 const styles = StyleSheet.create({
     leftColumn: {
         backgroundColor: "gray",
-        marginTop: 60,
+        marginTop: topMargin,
         width: 50,
-        height: 450,
+        height: canvasHeight+50,
         borderBottomLeftRadius: 20,
         borderTopLeftRadius: 20,
 
@@ -35,13 +33,11 @@ const styles = StyleSheet.create({
     timeLabels: {
         flexDirection: "column",
         paddingLeft: 10,
-        paddingTop: 15,
+        marginTop: startMargin-10,
         backgroundColor: "grey",
-        justifyContent: "space-between",
         borderTopLeftRadius: 20,
     },
     text: {
-        marginTop: 400/28
-
+        marginBottom: canvasHeight/21
     }
 })
