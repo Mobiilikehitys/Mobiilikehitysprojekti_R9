@@ -4,7 +4,13 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
- 
+  apiKey: "AIzaSyBVX2zsw_u7V__CSFhDxPVn_tePmTxL6iw",
+  authDomain: "mobile-120f6.firebaseapp.com",
+  projectId: "mobile-120f6",
+  storageBucket: "mobile-120f6.firebasestorage.app",
+  messagingSenderId: "814590261084",
+  appId: "1:814590261084:web:3062436ebc44b39bde7399",
+  measurementId: "G-XP80D5H75B"
   
 };
 
