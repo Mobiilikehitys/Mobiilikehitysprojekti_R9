@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "256966699966",
+    "project_id": "project-app-with-functions",
+    "storage_bucket": "project-app-with-functions.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:256966699966:android:4b944cc37d5e157cfe67ef",
+        "android_client_info": {
+          "package_name": "com.anonymous.taloyhtioApp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC3bYPx1rWzw9chMMoq7c0zCwPDycHn_lY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

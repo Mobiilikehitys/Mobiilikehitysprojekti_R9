@@ -4,6 +4,8 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
+
+
   
 };
 

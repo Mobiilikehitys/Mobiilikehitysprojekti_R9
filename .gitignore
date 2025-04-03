@@ -36,6 +36,10 @@ yarn-error.*
 
 # local env files
 .env*.local
+.env
 
 # typescript
 *.tsbuildinfo
+
+#firebase admin private key
+project-app-with-functions-firebase-adminsdk-fbsvc-3faf44b774.json
