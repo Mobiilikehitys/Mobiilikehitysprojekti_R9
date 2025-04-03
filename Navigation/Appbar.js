@@ -27,6 +27,7 @@ export default function AppBar(){
                         title="Aloitus"
                         
                         />
+                    
                     <Menu.Item
                         onPress={() => {
                             closeMenu()

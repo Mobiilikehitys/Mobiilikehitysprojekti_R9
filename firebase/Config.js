@@ -1,9 +1,10 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot  } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp  } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
 
 
 const firebaseConfig = {
+  
   
 };
 
@@ -15,6 +16,8 @@ const firebaseConfig = {
 
   const RESERVATIONS = 'reservations'
   const RESOURCES = 'resources'
+  const BULLETINS = 'bulletins'
+  const MARKETPRODUCTS = 'marketproducts'
 
   
 
@@ -23,6 +26,8 @@ const firebaseConfig = {
     collection,
     RESERVATIONS,
     RESOURCES,
+    BULLETINS,
+    MARKETPRODUCTS,
     query,
     onSnapshot,
     addDoc,
@@ -30,7 +35,8 @@ const firebaseConfig = {
     signInWithEmailAndPassword,
     auth,
     onAuthStateChanged,
-    createUserWithEmailAndPassword
+    createUserWithEmailAndPassword,
+    serverTimestamp
 
 
     

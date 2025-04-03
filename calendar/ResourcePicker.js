@@ -23,7 +23,7 @@ export default function ResourcePicker({resources, resource, setResource}){
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: 20,
+
     },
     picker:{
         

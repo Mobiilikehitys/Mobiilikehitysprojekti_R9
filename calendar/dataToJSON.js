@@ -53,6 +53,7 @@ export default function dataToJSON({data}) {
             
 
             let reservation
+            let endTime0 = false
             if(dateList.length == 1){
                 
                 reservation = {
@@ -62,7 +63,6 @@ export default function dataToJSON({data}) {
                 }
                
             }else if(i == 0 && i != (dateList.length-1) ){
-                console.log("Pitkän varauksen alku")
                 reservation = {
                     "Person":person,
                     "Starting time": startTime,
@@ -76,16 +76,21 @@ export default function dataToJSON({data}) {
                 }
                 
             }else if(i == dateList.length-1){
-                reservation = {
-                    "Person":person,
-                    "Starting time": "0:00",
-                    "Ending time": endTime
+                if(endTime != "0:00"){
+                    reservation = {
+                        "Person":person,
+                        "Starting time": "0:00",
+                        "Ending time": endTime
+                    }
+                }else{
+                    endTime0 = true
                 }
+                
             }else{
                 throw new Error("Problem with converting data to JSON")
             }
             
-            if(!dayAlready){
+            if(!dayAlready && endTime0 == false){
             for(let c = 0; c< oneJSON['Resources'].length ; c++){
                 let deepCopy = JSON.parse(JSON.stringify(reservation))
                 if(oneJSON['Resources'][c]['Resource'] == resource){
@@ -96,7 +101,7 @@ export default function dataToJSON({data}) {
            }
            returnJSON = [...returnJSON, oneJSON]
            oneJSON = {}
-            }else{
+            }else if(endTime0 == false){
                 let index1
                 console.log("Päivää ei valmiina")
                 for(let b = 0; b<returnJSON.length; b++){

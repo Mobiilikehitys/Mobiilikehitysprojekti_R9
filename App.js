@@ -17,7 +17,7 @@ import Aloitus from './screens/Aloitus.js';
 import AppBar from './Navigation/Appbar.js';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
-
+import Board from './Bulletin board/board.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator();

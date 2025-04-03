@@ -1,11 +1,16 @@
 import React from 'react'
 import {StyleSheet, View, Text} from 'react-native'
+import Board from '../Bulletin board/board';
+import {auth, onAuthStateChanged} from '../firebase/Config'
 
 export default function Ilmoitustaulu() {
+
+    const user = auth.currentUser;
+
     return (
-<View style={styles.container}>
-<Text style={styles.title}>Ilmoitustaulu</Text>
-</View>
+        <View>
+        {user ? <Board user={user.email}/> : <Text>Sign in to see the board</Text>}
+        </View>
     )
 }
 
