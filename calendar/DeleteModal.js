@@ -4,8 +4,9 @@ import { Pressable, View, StyleSheet, Modal, Text, TouchableOpacity, ScrollView,
 import deleteItem from "../firebase/Delete"
 import ResourcePicker from "./ResourcePicker"
 import reservation from "./reservation"
-import { firestore, RESERVATIONS } from "../firebase/Config"
+import { firestore, RESERVATIONS, NOTIFICATIONS } from "../firebase/Config"
 import Icon from 'react-native-vector-icons/FontAwesome'
+import { deleteNotification } from "./Notifications/Notifications"
 
 export default function DeleteModal({person, delModalVisible,setDelModalVisible, resources}){
     const [delSuccess, setDelSuccess] = useState("")
@@ -16,6 +17,7 @@ export default function DeleteModal({person, delModalVisible,setDelModalVisible,
     }
 
     const Reservations = useData(RESERVATIONS)
+    const Notifications = useData(NOTIFICATIONS)
     console.log("Reservations-deleteModal:", Reservations)
 
     const DeleteListScroll = () => {
@@ -24,7 +26,8 @@ export default function DeleteModal({person, delModalVisible,setDelModalVisible,
             {Reservations.map((data, index) => (
                 data.henkilo == person && data.resurssi == resource && 
                 <View key={data.id} style={styles.Reservation}>
-                <Pressable onPress={() => deleteItem(RESERVATIONS, data.id)} >
+                <Pressable onPress={() => {deleteItem(RESERVATIONS, data.id)
+                                            deleteNotification(Notifications,person,resource, data.aloituspaiva, data.aloitusaika)}}>
                 <View style={styles.delRow}>
                 <View style={styles.texts}>
                 <Text>{data.aloituspaiva+" "+data.aloitusaika}</Text>

@@ -35,19 +35,9 @@ export default function CalendarModal ({person, resources, modalVisible, setModa
     const [reserSuccess, setReserSuccess] = useState(null)
   
     const data = useData(RESERVATIONS)
-    let dataJSON = []
-    try{
     
-    
-    if(data.length != 0){
-        dataJSON = dataToJSON({data})
-    }
-    }catch(error){
-        console.error("CalendarModal-dataJSON:",error)
-    }
 
-    console.log("CalendarModal-data:",data)
-    console.log("CalendarModal-dataJSON:",dataJSON)
+
 
     const onChangeStart = (event, selectedDate) => {
         const currentDate = selectedDate || startDate
@@ -172,7 +162,7 @@ export default function CalendarModal ({person, resources, modalVisible, setModa
             <View style={styles.buttons}>
             <View style={styles.button}>
             <Button title="Varaa"
-            onPress={() => {reservation({dataJSON, reserSuccess, setReserSuccess ,resource, person, startDate, clockStart, endDate, clockEnd})}}/>
+            onPress={() => {reservation({data, reserSuccess, setReserSuccess ,resource, person, startDate, clockStart, endDate, clockEnd})}}/>
             </View>
             <View style={styles.button}>
 

@@ -4,8 +4,9 @@ import { useState } from "react";
 import useData from "./useData";
 import dataToJSON from "./dataToJSON";
 import timeToMinutes from "./timeToMinutes";
+import { newNotification } from "./Notifications/Notifications";
 
-export default function reservation({dataJSON, reserSuccess, setReserSuccess,resource, person, startDate, clockStart, endDate, clockEnd}){
+export default function reservation({data, reserSuccess, setReserSuccess,resource, person, startDate, clockStart, endDate, clockEnd}){
     
     const startDateString = startDate.getDate().toString()+"."+(startDate.getMonth()+1).toString()+"."+startDate.getFullYear().toString()
     const endDateString = endDate.getDate().toString()+"."+(startDate.getMonth()+1).toString()+"."+endDate.getFullYear().toString()
@@ -13,7 +14,16 @@ export default function reservation({dataJSON, reserSuccess, setReserSuccess,res
     const endTimeString = clockEnd.getHours().toString()+":"+ clockEnd.getMinutes().toString().padStart(2, "0")
     
 
+    let dataJSON = []
+    try{
     
+    
+    if(data.length != 0){
+        dataJSON = dataToJSON({data})
+    }
+    }catch(error){
+        console.error("CalendarModal-dataJSON:",error)
+    }
     
 
     const timeTest1 = checkCurrentTime(startDate, clockStart)
@@ -47,7 +57,22 @@ export default function reservation({dataJSON, reserSuccess, setReserSuccess,res
 
     if(timeTest1 && timeTest2 && timeCollasionTest){
         save()
+        noteTime = new Date()
+        noteTime.setDate(startDate.getDate())
+        noteTime.setMonth(startDate.getMonth())
+        noteTime.setFullYear(startDate.getFullYear())
+        noteTime.setHours(clockStart.getHours())
+        noteTime.setMinutes(clockStart.getMinutes())
+
+        endTime = new Date()
+        endTime.setDate(endDate.getDate())
+        endTime.setMonth(endDate.getMonth())
+        endTime.setFullYear(endDate.getFullYear())
+        endTime.setHours(clockEnd.getHours())
+        endTime.setMinutes(clockEnd.getMinutes())
+        newNotification(person,resource, noteTime, endTime)
         setReserSuccess("Varaus onnistui")
+
     }
     
 }
