@@ -4,7 +4,8 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
-  
+
+
   
 };
 
@@ -19,7 +20,6 @@ const firebaseConfig = {
   const BULLETINS = 'bulletins'
   const MARKETPRODUCTS = 'marketproducts'
   const NOTIFICATIONS = 'notifications2'
-
   
 
   export {
@@ -40,7 +40,6 @@ const firebaseConfig = {
     createUserWithEmailAndPassword,
     serverTimestamp,
     Timestamp
-
 
     
   }

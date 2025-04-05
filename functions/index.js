@@ -9,50 +9,51 @@ const messaging = admin.messaging();
 exports.checkAndSendNotifications = functions.pubsub
     .schedule("every 5 minutes")
     .onRun(async () => {
-        const now = admin.firestore.Timestamp.fromMillis(Date.now());
-        const snapshotToken = await db.collection("notifications").get()
-        
-        let token
-        snapshotToken.docs.forEach(doc => {
-            token = doc.fcmToken;
-          });
+      const now = admin.firestore.Timestamp.fromMillis(Date.now());
 
-        const snapshotTime = await db.collection("notifications2")
+      const snapshotToken = await db.collection("users").get();
+
+      let token;
+      snapshotToken.docs.forEach((doc) => {
+        const data = doc.data();
+        token = data.fcmToken;
+      });
+
+      console.log("Fetched token:", token);
+
+      const snapshotTime = await db.collection("notifications2")
           .where("muistutusaika", "<=", now)
-          .where("muistutusaika", "==", "heti")
+          //.where("muistutusaika", "==", "heti")
           .get();
 
 
-        if(snapshotTime.empty){
-            return null
-        }
-
-        const sendPromises = snapshotTime.docs.map(async (doc) => {
-            const data = doc.data()
-            const resource = data.resurssi
-            const user = data.henkilo
-            const aloitusaika = data.aloitusaika
-            const lopetusaika = data.lopetusaika
-            const message = resource + ": " + aloitusaika +","+lopetusaika
-            await messaging.send({
-                notification: {title: "Varausmuistutus", body: message},
-                token: token,
-              })
-            return db.collection("notifications2").doc(doc.id).delete()
-        })
-
-        await Promise.all(sendPromises);
-        console.log("All due notifications sent.");
+      if (snapshotTime.empty) {
+        console.log("No pending notifications.");
         return null;
+      }
 
-    })
-    
+      const sendPromises = snapshotTime.docs.map(async (doc) => {
+        const data = doc.data();
+        const resource = data.resurssi;
+        //const user = data.henkilo;
+        const aloitusaika = data.aloitusaika;
+        const lopetusaika = data.lopetusaika;
+        const message = resource + ": " + aloitusaika +","+lopetusaika;
+        await messaging.send({
+          notification: {title: "Varausmuistutus", body: message},
+          token: token,
+        });
+        return db.collection("notifications2").doc(doc.id).delete();
+      });
 
+      await Promise.all(sendPromises);
+      console.log("All due notifications sent.");
+      return null;
+    });
 
-    
 
 // function name & event type
-/*exports.checkAndSendNotifications = functions.pubsub
+/* exports.checkAndSendNotifications = functions.pubsub
     .schedule("every 5 minutes")
     .onRun(async () => {
       // callback
@@ -75,7 +76,7 @@ exports.checkAndSendNotifications = functions.pubsub
           token: fcmToken,
         });
 
-        // eslint-disable-next-line max-len
+        // eslint-disable-next-line max-len, max-len, max-len
         return db.collection("notifications").doc(doc.id).delete(); // Remove after sending
       });
 

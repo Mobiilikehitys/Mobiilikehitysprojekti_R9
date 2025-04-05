@@ -39,3 +39,9 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+#google-services
+google-services.json
+
+#firebase admin private key
+project-app-with-functions-firebase-adminsdk-fbsvc-3faf44b774.json

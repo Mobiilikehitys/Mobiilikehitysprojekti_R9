@@ -18,6 +18,7 @@ import AppBar from './Navigation/Appbar.js';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import Board from './Bulletin board/board.js';
+import NotificationHandler from "./notifications/NotificationHandler";
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -36,6 +37,8 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <PaperProvider>
+      <NotificationHandler />
+
         <NavigationContainer ref={navigationRef}>
           {currentRoute !== 'Login' && <AppBar />}
           <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
