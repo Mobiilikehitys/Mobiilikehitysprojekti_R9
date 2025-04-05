@@ -5,13 +5,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBx6D9a1lIqU0frIbKq0Cs8XddlXonHfsM",
-  authDomain: "project-app-with-functions.firebaseapp.com",
-  projectId: "project-app-with-functions",
-  storageBucket: "project-app-with-functions.firebasestorage.app",
-  messagingSenderId: "256966699966",
-  appId: "1:256966699966:web:b5fc166e5d81d39afe67ef",
-  measurementId: "G-XP80D5H75B"
+  
 };
 
 const app = initializeApp(firebaseConfig);
