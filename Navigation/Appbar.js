@@ -70,6 +70,13 @@ export default function AppBar(){
                         }}
                         title="Omat tiedot"
                         />
+                    <Menu.Item
+                        onPress={() => {
+                            closeMenu()
+                            navigation.navigate('Kirjaudu ulos')
+                        }}
+                        title="Kirjaudu ulos"
+                        />
                 </Menu>
         </Appbar.Header>
     )

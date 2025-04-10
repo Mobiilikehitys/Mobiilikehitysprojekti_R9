@@ -5,7 +5,7 @@ export const convertFirebaseTimeStampJS = (timeStamp) => {
         firebaseTime.getDate() + '.' +
         (firebaseTime.getMonth() +1) + '.'+
         firebaseTime.getFullYear() + ' '+
-        firebaseTime.getHours() + '.'+
+        firebaseTime.getHours() + ':'+
         String(firebaseTime.getMinutes()).padStart(2, '0') + '.'+
         String(firebaseTime.getSeconds()).padStart(2, '0')
         return result

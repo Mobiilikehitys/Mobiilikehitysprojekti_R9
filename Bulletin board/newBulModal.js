@@ -5,6 +5,7 @@ import newBulletin from "./newBulletin";
 export default function BulletinModal({user, modalVisible, setModalVisible}){
     const [bulletin, setBulletin] = useState("")
     const [header, setHeader] = useState("")
+    const [postSuccess, setPostSuccess] = useState("")
 
     return(<Modal
     transparent={true}
@@ -24,9 +25,12 @@ export default function BulletinModal({user, modalVisible, setModalVisible}){
             onChangeText={(text) => setBulletin(text)}
             value={bulletin}
             placeholder="Kirjoita tähän..."/></View>
+            <View style={styles.postInfo}>
+                <Text>{postSuccess}</Text>
+            </View>
             <View style={styles.buttons}>
             <View style={styles.button}>
-            <Button title="Ilmoita" onPress={() => {newBulletin(user, header, bulletin)}}/></View>
+            <Button title="Ilmoita" onPress={() => {newBulletin(setPostSuccess, user, header, bulletin)}}/></View>
             <View style={styles.button}>
             <Button title="Sulje" onPress={()=> {setModalVisible(false)}}/></View></View>
         </View></View>
