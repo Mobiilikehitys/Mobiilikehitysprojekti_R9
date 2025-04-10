@@ -18,6 +18,7 @@ import AppBar from './Navigation/Appbar.js';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import Board from './Bulletin board/board.js';
+import { AuthProvider } from './context/AuthContext.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -34,6 +35,7 @@ export default function App() {
   }, [navigationRef]);
 
   return (
+    <AuthProvider>
     <SafeAreaProvider>
       <PaperProvider>
         <NavigationContainer ref={navigationRef}>
@@ -52,6 +54,7 @@ export default function App() {
         </NavigationContainer>
       </PaperProvider>
     </SafeAreaProvider>
+    </AuthProvider>
   );
 }
 

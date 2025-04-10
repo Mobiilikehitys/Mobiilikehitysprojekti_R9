@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Button, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { getAuth, createUserWithEmailAndPassword } from "../firebase/Config.js";
+import { getAuth, createUserWithEmailAndPassword} from "../firebase/Config.js";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Register() {
@@ -10,27 +11,36 @@ export default function Register() {
     //const [isCompany, setIsCompany] = useState(false);
     const [username, setUsername] = useState("test@foo.com");
     const [password, setPassword] = useState("123456");
+    const [accountType, setAccountType] = useState("user");
 
-    const signup = () => {
-        const auth = getAuth()
-
-        createUserWithEmailAndPassword(auth, username, password)
-        .then(() => {
-            navigation.navigate("Login")
-            console.log('User account created & signed in!');
-        })
-        .catch(error => {
-            if (error.code === 'auth/email-already-in-use') {
-            console.log('That email address is already in use!');
-            }
-
-            if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
-            }
-
-            console.error(error);
-        });
-    }
+    const signup = async () => {
+      const auth = getAuth();
+      const db = getFirestore();
+      
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, username, password);
+        const user = userCredential.user;
+    
+        const userData = {
+          email: username,
+          createdAt: new Date(),
+        };
+    
+        const docRef = doc(db, accountType === "company" ? `companies/${user.uid}` : `users/${user.uid}`);
+        await setDoc(docRef, userData);
+    
+        console.log('User registered and data saved!');
+        navigation.navigate("Login");
+      } catch (error) {
+        if (error.code === 'auth/email-already-in-use') {
+          console.log('That email address is already in use!');
+        }
+        if (error.code === 'auth/invalid-email') {
+          console.log('That email address is invalid!');
+        }
+        console.error(error);
+      }
+    };
 
     return (
         <View style={styles.container}>
@@ -63,6 +73,30 @@ export default function Register() {
             <Text>Taloyhtiö</Text>
           </View>*/}
           
+          <View style={styles.accountTypeContainer}>
+            <Text style={styles.label}>Tilin tyyppi</Text>
+            <View style={styles.radioGroup}>
+              <TouchableOpacity
+                style={[
+                  styles.radioButton,
+                  accountType === "user" && styles.radioButtonSelected,
+                ]}
+                onPress={() => setAccountType("user")}
+              >
+                <Text style={styles.radioText}>Asukas</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.radioButton,
+                  accountType === "company" && styles.radioButtonSelected,
+                ]}
+                onPress={() => setAccountType("company")}
+              >
+                <Text style={styles.radioText}>Taloyhtiö</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <TouchableOpacity style={styles.button} onPress={signup}>
             <Text style={styles.buttonText}>Jatka</Text>
           </TouchableOpacity>
@@ -129,6 +163,28 @@ export default function Register() {
       link: {
         color: "#ff6b6b",
         fontWeight: "bold",
+      },
+      accountTypeContainer: {
+        width: "100%",
+        marginTop: 10,
+      },
+      radioGroup: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 5,
+      },
+      radioButton: {
+        padding: 10,
+        borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 5,
+        marginRight: 10,
+      },
+      radioButtonSelected: {
+        backgroundColor: "#ff6b6b",
+      },
+      radioText: {
+        color: "#000",
       },
     });
 
