@@ -20,6 +20,7 @@ import { PaperProvider } from 'react-native-paper';
 import Board from './Bulletin board/board.js';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import KirjauduUlos from './screens/Kirjaudu ulos.js';
+import { AuthProvider } from './context/AuthContext.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -36,7 +37,9 @@ export default function App() {
   }, [navigationRef]);
 
   return (
+    <AuthProvider>
     <GestureHandlerRootView>
+
     <SafeAreaProvider>
       <PaperProvider>
         <NavigationContainer ref={navigationRef}>
@@ -57,6 +60,7 @@ export default function App() {
       </PaperProvider>
     </SafeAreaProvider>
     </GestureHandlerRootView>
+    </AuthProvider>
   );
 }
 
