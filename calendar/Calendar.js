@@ -276,10 +276,9 @@ export default function Calendar ({user}){
             <ResourcePicker resources={testResources} resource= {resource} setResource={setResource}/>
             </View>
         <View style={styles.container}>
+            {/*<WithOutCanvases resource={resource} dataJSON={dataJSON} daysToShow={daysToShow}/>*/}
             <TimeLabels/>
-            <WithOutCanvases resource={resource} dataJSON={dataJSON} daysToShow={daysToShow}/>
-            {/*<TimeLabels/>
-            <Canvases/>*/}
+            <Canvases/>
             </View>
             <View style={styles.modals}>
             <CalendarModal person={user} resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
