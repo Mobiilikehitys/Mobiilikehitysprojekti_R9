@@ -38,7 +38,7 @@ export default function Aloitus() {
       const reservationDoc = doc(firestore, 'reservations', reservationId);
       await deleteDoc(reservationDoc); 
       setModalVisible(false); 
-      console.log('Reservation deleted successfully!');
+      console.log('Reservation deleted successfully!!');
     } catch (error) {
       console.error('Error deleting reservation:', error);
     }
@@ -46,7 +46,15 @@ export default function Aloitus() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tervetuloa, {user?.email}!</Text>
+      <Text style={styles.title}>
+  {user?.accountType === 'company' ? (
+    <>
+      Tervetuloa, {user?.email} <Text style={{ fontSize: 15, color: '#555' }}>(Yritystili)</Text>
+    </>
+  ) : (
+    <>Tervetuloa, {user?.email}!</>
+  )}
+</Text>
       <Text style={styles.subtitle}>Nykyiset varauksesi:</Text>
       {reservations.length > 0 ? (
         <FlatList

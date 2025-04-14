@@ -2,8 +2,9 @@ import { useNavigation } from '@react-navigation/native';
 import { Appbar, Menu } from 'react-native-paper';
 import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
-
+import { useAuth } from '../context/AuthContext.js';
 export default function AppBar() {
+  const { user } = useAuth();
   const navigation = useNavigation();
   const [menuVisible, setMenuVisible] = useState(false);
 
@@ -72,7 +73,7 @@ export default function AppBar() {
             closeMenu();
             navigation.navigate('Tiedot');
           }}
-          title="Omat tiedot"
+          title={user?.accountType === 'company' ? 'Asukkaiden tiedot' : 'Omat tiedot'}
           leadingIcon="account"
         />
       </Menu>
