@@ -1,12 +1,11 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc  } from "firebase/firestore";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, updateDoc, deleteField, getDocs, deleteDoc  } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 
 const firebaseConfig = {
-
-
+  
 };
 
 const app = initializeApp(firebaseConfig);
@@ -33,8 +32,6 @@ export {
   NOTIFICATIONS,
   query,
   onSnapshot,
-  doc,
-  setDoc,
   addDoc,
   getAuth,
   signInWithEmailAndPassword,
@@ -42,7 +39,14 @@ export {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  doc,
+  setDoc,
+  deleteField,
+  updateDoc,
+  getDocs,
+  deleteDoc,
+  signOut
 
 
   

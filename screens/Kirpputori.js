@@ -5,6 +5,7 @@ import { auth } from '../firebase/Config';
 
 export default function Kirpputori() {
     const user = auth.currentUser;
+    console.log("useremail:", user.email)
 
     return (
         <View>

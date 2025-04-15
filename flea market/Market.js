@@ -1,6 +1,6 @@
 import useDataOrder from "../Bulletin board/useDataOrder";
 import { useState } from "react";
-import { MARKETPRODUCTS } from "../firebase/Config";
+import { MARKETPRODUCTS, collection, firestore } from "../firebase/Config";
 import { StyleSheet, View, Text, Button, FlatList, Pressable } from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome'
 import NewItemModal from "./newItemModal";
@@ -9,7 +9,7 @@ import deleteItem from "../firebase/Delete";
 
 export default function FleaMarket({user}){
     const [modalVisible, setModalVisible] = useState(false)
-    const oldData = useDataOrder(MARKETPRODUCTS)
+    const oldData = useDataOrder(collection(firestore,MARKETPRODUCTS))
 
     const RenderItem = (item) => {
         const timeStamp = convertFirebaseTimeStampJS(item.luotu)
@@ -44,7 +44,7 @@ export default function FleaMarket({user}){
                 onPress={() => setModalVisible(true)}/></View></View>
                 <FlatList
                             data={oldData}
-                            renderItem={({item, index}) => RenderItem(item) }
+                            renderItem={({item}) => RenderItem(item) }
                             keyExtractor={(item) => item.id}
                             contentContainerStyle={styles.flatlistContainer}
                             />

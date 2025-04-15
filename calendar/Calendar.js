@@ -11,6 +11,7 @@ import dataToJSON from './dataToJSON';
 import DeleteModal from './DeleteModal';
 import { RESERVATIONS } from '../firebase/Config';
 import { canvasHeight, canvasWidth, startMargin, topMargin, header, headerFont } from './CanvasSizes';
+import WithOutCanvases from './WithOutCanvases';
 
 
 
@@ -274,7 +275,8 @@ export default function Calendar ({user}){
                 <View style={styles.resourcePicker}>
             <ResourcePicker resources={testResources} resource= {resource} setResource={setResource}/>
             </View>
-        <View style={styles.container}>   
+        <View style={styles.container}>
+            {/*<WithOutCanvases resource={resource} dataJSON={dataJSON} daysToShow={daysToShow}/>*/}
             <TimeLabels/>
             <Canvases/>
             </View>
