@@ -19,6 +19,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import Board from './Bulletin board/board.js';
 import { AuthProvider } from './context/AuthContext.js';
+import ResourcesManagement from './resourcesManagement/resourcesManagement.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -50,6 +51,8 @@ export default function App() {
             <Stack.Screen name="Talotiedot" component={Talotiedot} />
             <Stack.Screen name="Kirpputori" component={Kirpputori} />
             <Stack.Screen name="Tiedot" component={Tiedot} />
+            <Stack.Screen name="Resurssien hallinta" component={ResourcesManagement} />
+
           </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>

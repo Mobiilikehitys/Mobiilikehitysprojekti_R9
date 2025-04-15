@@ -1,10 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc  } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, orderBy } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
 
 
 
 const firebaseConfig = {
+
+
   
 };
 
@@ -19,7 +21,7 @@ const RESOURCES = 'resources'
 const BULLETINS = 'bulletins'
 const MARKETPRODUCTS = 'marketproducts'
 const NOTIFICATIONS = 'notifications2'
-
+const MANAGEDRESOURCES = 'managedresources'
 
 
 export {
@@ -41,7 +43,9 @@ export {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   serverTimestamp,
-  Timestamp
+  Timestamp,
+  MANAGEDRESOURCES,
+  orderBy,
 
 
   
