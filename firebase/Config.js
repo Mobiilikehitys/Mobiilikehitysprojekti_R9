@@ -38,8 +38,6 @@ export {
   NOTIFICATIONS,
   query,
   onSnapshot,
-  doc,
-  setDoc,
   addDoc,
   getAuth,
   signInWithEmailAndPassword,

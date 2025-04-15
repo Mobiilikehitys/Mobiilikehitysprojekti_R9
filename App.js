@@ -38,7 +38,6 @@ export default function App() {
 
   return (
     <AuthProvider>
-    <GestureHandlerRootView>
 
     <SafeAreaProvider>
       <PaperProvider>
@@ -59,7 +58,6 @@ export default function App() {
         </NavigationContainer>
       </PaperProvider>
     </SafeAreaProvider>
-    </GestureHandlerRootView>
     </AuthProvider>
   );
 }

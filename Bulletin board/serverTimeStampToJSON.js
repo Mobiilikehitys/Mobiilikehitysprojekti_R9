@@ -1,4 +1,5 @@
 export const convertFirebaseTimeStampJS = (timeStamp) => {
+    console.log("convertTimeStamp aloitettu")
     if( timeStamp !== null && timeStamp !== undefined){
         const firebaseTime = new Date(timeStamp.seconds * 1000 + timeStamp.nanoseconds / 1000000)
         const result =
