@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, orderBy } from "firebase/firestore";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, updateDoc, deleteField, getDocs, deleteDoc, orderBy } from "firebase/firestore";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 
@@ -34,8 +34,6 @@ export {
   NOTIFICATIONS,
   query,
   onSnapshot,
-  doc,
-  setDoc,
   addDoc,
   getAuth,
   signInWithEmailAndPassword,
@@ -44,6 +42,13 @@ export {
   createUserWithEmailAndPassword,
   serverTimestamp,
   Timestamp,
+  doc,
+  setDoc,
+  deleteField,
+  updateDoc,
+  getDocs,
+  deleteDoc,
+  signOut,
   MANAGEDRESOURCES,
   orderBy,
 

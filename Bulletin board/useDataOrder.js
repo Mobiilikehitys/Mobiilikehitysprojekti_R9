@@ -2,10 +2,10 @@ import { useEffect, useState } from "react"
 import { collection, firestore, query, BULLETINS, onSnapshot } from "../firebase/Config"
 import { orderBy } from "firebase/firestore"
 
-export default function useDataOrder (target) {
+export default function useDataOrder (targetCollection) {
     const [data, setData] = useState([])
     useEffect(() => {
-        const q = query(collection(firestore, target), orderBy('luotu', 'desc'))
+        const q = query(targetCollection, orderBy('luotu', 'desc'))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
                     const tempBullets = []
                     querySnapshot.forEach((doc) => {

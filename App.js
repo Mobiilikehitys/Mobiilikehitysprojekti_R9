@@ -18,6 +18,8 @@ import AppBar from './Navigation/Appbar.js';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
 import Board from './Bulletin board/board.js';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import KirjauduUlos from './screens/Kirjaudu ulos.js';
 import { AuthProvider } from './context/AuthContext.js';
 import ResourcesManagement from './resourcesManagement/resourcesManagement.js';
 
@@ -37,6 +39,7 @@ export default function App() {
 
   return (
     <AuthProvider>
+
     <SafeAreaProvider>
       <PaperProvider>
         <NavigationContainer ref={navigationRef}>
@@ -51,6 +54,7 @@ export default function App() {
             <Stack.Screen name="Talotiedot" component={Talotiedot} />
             <Stack.Screen name="Kirpputori" component={Kirpputori} />
             <Stack.Screen name="Tiedot" component={Tiedot} />
+            <Stack.Screen name="Kirjaudu ulos" component={KirjauduUlos} />
             <Stack.Screen name="Resurssien hallinta" component={ResourcesManagement} />
 
           </Stack.Navigator>

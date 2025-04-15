@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { getAuth, signInWithEmailAndPassword } from "../firebase/Config.js";
+import { getAuth, signInWithEmailAndPassword,auth,firestore } from "../firebase/Config.js";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext.js";
@@ -13,7 +13,7 @@ export default function Login() {
 
   const signin = async () => {
     const auth = getAuth();
-    const db = getFirestore();
+    const db = firestore;
   
     try {
       const userCredentials = await signInWithEmailAndPassword(auth, username, password);

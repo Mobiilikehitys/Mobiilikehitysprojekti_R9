@@ -1,6 +1,6 @@
 import { addDoc, collection, firestore, onSnapshot, BULLETINS, auth, serverTimestamp } from "../firebase/Config";
 
-export default function newBulletin (user, header, message) {
+export default function newBulletin (setPostSuccess , user, header, message) {
 
     const save = async () => {
         console.log("newBulletin-save-funktio")
@@ -9,11 +9,11 @@ export default function newBulletin (user, header, message) {
             henkilo: user,
             otsikko: header,
             luotu: serverTimestamp(),
-            viesti: message
-            
-            
-        })}catch(error){
+            viesti: message })
+            setPostSuccess("Uusi ilmoitus lisätty")
+            }catch(error){
             console.log("Could not post a new bulletin")
+            setPostSuccess("Ilmoitus epäonnistui")
         }
         }
         save()
