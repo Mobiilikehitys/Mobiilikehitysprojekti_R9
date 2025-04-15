@@ -5,7 +5,8 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
-  
+
+
 };
 
 const app = initializeApp(firebaseConfig);
