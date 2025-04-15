@@ -76,6 +76,14 @@ export default function AppBar() {
           title={user?.accountType === 'company' ? 'Asukkaiden tiedot' : 'Omat tiedot'}
           leadingIcon="account"
         />
+        <Menu.Item
+          onPress={() => {
+            closeMenu();
+            navigation.navigate('Kirjaudu ulos');
+          }}
+          title="Kirjaudu ulos"
+          leadingIcon="logout"
+        />
       </Menu>
     </Appbar.Header>
   );
