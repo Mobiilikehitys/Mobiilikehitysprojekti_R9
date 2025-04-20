@@ -23,14 +23,26 @@ export default function NewResourceModal({ user }) {
     });
 
     const [enabledHoursStart, setEnabledHoursStart] = useState("00:00")
-    const [enabledHoursEnd, setEnabledHoursEnd] = useState("00:00");
+    const [enabledHoursEnd, setEnabledHoursEnd] = useState("24:00");
     const filteredEndHours = hours.filter(hour => hour.value > enabledHoursStart);
 
 
     const save = () => {
-        saveNewResource(resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
-        setResourceName('')
-        setModalVisible(!modalVisible)
+        if (resourceName == '') {
+            Alert.alert(
+                'Virhe',
+                'Resurssilla on oltava nimi')
+        }
+        else if (enabledHoursStart >= enabledHoursEnd) {
+            Alert.alert(
+                'Virhe',
+                'Tarkista varausajat')
+        }
+        else {
+            saveNewResource(resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
+            setResourceName('')
+            setModalVisible(!modalVisible)
+        }
     }
 
     const toggleDay = (dayName) => {
@@ -122,7 +134,7 @@ export default function NewResourceModal({ user }) {
                             <Pressable
                                 style={[styles.formButton]}
                                 onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={styles.formButtonText}>Peru</Text>
+                                <Text style={styles.formButtonText}>Peruuta</Text>
                             </Pressable>
 
                             <Pressable
@@ -161,7 +173,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
         backgroundColor: '#fbfafb',
-        marginTop: 100,
+        marginTop: 50,
         elevation: 5,
     },
     modalText: {

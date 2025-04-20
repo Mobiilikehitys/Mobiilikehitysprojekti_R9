@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext.js";
 import saveEditedResource from "./saveEditedResource.js";
 import { Picker } from "@react-native-picker/picker";
 import hours from "./hours.js";
+import deleteItem from "../firebase/Delete.js";
 
 export default function EditResourceModal({ user, item }) {
 
@@ -21,8 +22,19 @@ export default function EditResourceModal({ user, item }) {
 
 
     const save = () => {
+        if (resourceName == '') {
+            Alert.alert(
+                'Virhe',
+                'Resurssilla on oltava nimi')
+        }
+        else if (enabledHoursStart >= enabledHoursEnd) {
+            Alert.alert(
+                'Virhe',
+                'Tarkista varausajat')
+        }
+        else {
         saveEditedResource(item, resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
-        setModalVisible(!modalVisible)
+        setModalVisible(!modalVisible)}
     }
 
     const toggleDay = (dayName) => {
@@ -61,7 +73,7 @@ export default function EditResourceModal({ user, item }) {
                             selectedValue={enabledHoursStart}
                             onValueChange={(itemValue, itemIndex) => {
                                 setEnabledHoursStart(itemValue)
-                                // setEnabledHoursEnd("23:00")
+                                // setEnabledHoursEnd("24:00")
                             }
                             }>
                             {
@@ -116,13 +128,32 @@ export default function EditResourceModal({ user, item }) {
                             <Pressable
                                 style={[styles.formButton]}
                                 onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={styles.formButtonText}>Peru</Text>
+                                <Text style={styles.formButtonText}>Peruuta</Text>
                             </Pressable>
 
                             <Pressable
                                 style={[styles.formButton]}
                                 onPress={save}>
                                 <Text style={styles.formButtonText}>Tallenna</Text>
+                            </Pressable>
+
+                            <Pressable
+                                style={[styles.formButton]}
+                                onPress={() => {
+                                    Alert.alert(
+                                        'Vahvista poisto',
+                                        'Haluatko varmasti poistaa resurssin?',
+                                        [
+                                            { text: 'Peruuta', style: 'cancel' },
+                                            {
+                                                text: 'Poista',
+                                                style: 'destructive',
+                                                onPress: () => deleteItem(item.collection, item.id)
+                                            }
+                                        ]
+                                    );
+                                }}>
+                                <Text style={styles.formButtonText}>Poista</Text>
                             </Pressable>
 
                         </View>
@@ -155,7 +186,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 20,
         backgroundColor: '#fbfafb',
-        marginTop: 100,
+        marginTop: 50,
         elevation: 5,
     },
     modalText: {

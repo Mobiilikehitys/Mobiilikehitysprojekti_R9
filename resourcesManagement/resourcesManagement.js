@@ -16,7 +16,9 @@ export default function ResourcesManagement({ user }) {
             const tempitems = []
             querySnapshot.forEach((doc) => {
                 console.log(doc.id)
-                tempitems.push({ ...doc.data(), id: doc.id })
+                tempitems.push({ ...doc.data(), id: doc.id, collection: doc.ref.parent.id })
+                console.log(doc.ref.parent.id)
+
             })
             setItems(tempitems)
         })
