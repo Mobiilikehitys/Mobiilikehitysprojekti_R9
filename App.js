@@ -21,7 +21,7 @@ import Board from './Bulletin board/board.js';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import KirjauduUlos from './screens/Kirjaudu ulos.js';
 import { AuthProvider } from './context/AuthContext.js';
-import ResourcesManagement from './resourcesManagement/resourcesManagement.js';
+import ResurssienHallinta from './screens/ResurssienHallinta.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -55,7 +55,7 @@ export default function App() {
             <Stack.Screen name="Kirpputori" component={Kirpputori} />
             <Stack.Screen name="Tiedot" component={Tiedot} />
             <Stack.Screen name="Kirjaudu ulos" component={KirjauduUlos} />
-            <Stack.Screen name="Resurssien hallinta" component={ResourcesManagement} />
+            <Stack.Screen name="Resurssien hallinta" component={ResurssienHallinta} />
 
           </Stack.Navigator>
         </NavigationContainer>

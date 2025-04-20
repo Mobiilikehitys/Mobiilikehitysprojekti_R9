@@ -1,11 +1,18 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, updateDoc, deleteField, getDocs, deleteDoc, orderBy } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, updateDoc, deleteField, getDocs, deleteDoc, orderBy, getDoc } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 
 const firebaseConfig = {
- 
+
+  apiKey: "AIzaSyDdYThSsO9cyGQGeYTNksiSA16pEY5EBTU",
+  authDomain: "project-app-with-functions.firebaseapp.com",
+  projectId: "project-app-with-functions",
+  storageBucket: "project-app-with-functions.firebasestorage.app",
+  messagingSenderId: "256966699966",
+  appId: "1:256966699966:web:b5fc166e5d81d39afe67ef"  
+
 };
 
 const app = initializeApp(firebaseConfig);
@@ -50,6 +57,7 @@ export {
   signOut,
   MANAGEDRESOURCES,
   orderBy,
+  getDoc,
 
 
   
