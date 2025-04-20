@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {ScrollView, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, Button, StatusBar, KeyboardAvoidingView, FlatList } from 'react-native';
 import Canvas, {Path2D} from 'react-native-canvas';
 import timeToMinutes from './timeToMinutes';
 import ResourcePicker from './ResourcePicker';
-import TimeLabels from './TimeLabels';
 import CalendarModal from './CalenderModal';
 import {thisDay, thisDayByMinutes} from './thisDay';
 import useData from './useData';
@@ -12,7 +11,11 @@ import DeleteModal from './DeleteModal';
 import { RESERVATIONS } from '../firebase/Config';
 import { canvasHeight, canvasWidth, startMargin, topMargin, header, headerFont } from './CanvasSizes';
 import WithOutCanvases from './WithOutCanvases';
-
+import { TimeLabels, DayHeaders } from './Headers';
+import getNextDays from './nextDays';
+import { testReservations, testResources } from './TestiResurssit';
+import Clock from './Kello';
+import Animated, { useAnimatedScrollHandler, useSharedValue, useDerivedValue, scrollTo, useAnimatedRef, runOnJS } from 'react-native-reanimated';
 
 
 
@@ -20,11 +23,94 @@ import WithOutCanvases from './WithOutCanvases';
 
 export default function Calendar ({user}){
 
+    const [resource, setResource] = useState(testResources[1])
+    const [fullClock, setFullClock] = useState("Loading...")
+    const [clockState, setClockState] = useState(null)
+    const [stoppedText, setStoppedText] = useState("")
+
+
+
+    const daysToShow = getNextDays()
+
+    const offsetX = useSharedValue(0)
+    const offsetY = useSharedValue(0)
+
+    const xRef1 = useAnimatedRef()
+    const xRef2 = useAnimatedRef()
+    const yRef1 = useAnimatedRef()
+    const yRef2 = useAnimatedRef()
+
+    const sharedLock = useSharedValue({1:false, 2:false, 3:false, 4:false})
+
+    const activeScroll = useSharedValue(null)
+
+
+      const scrollHandler1 = useAnimatedScrollHandler((event) => {
+            if(sharedLock.value[1] == false){
+                sharedLock.value={1:false, 2:true, 3:true, 4:true}
+                activeScroll.value = 1
+                offsetX.value = event.contentOffset.x;
+                sharedLock.value={1:false, 2:false, 3:false, 4:false}
+
+            }
+                
+            
+
+      });
+
+      const scrollHandler2 = useAnimatedScrollHandler((event) => {
+            if(sharedLock.value[2] == false){
+                sharedLock.value={1:true,2:false, 3:true, 4:true}
+                activeScroll.value = 2
+                offsetX.value = event.contentOffset.x;
+                sharedLock.value={1:false, 2:false, 3:false, 4:false}
+            }
+            
+        
+
+  });
+
+  const scrollHandler3 = useAnimatedScrollHandler((event) => {
+    if(sharedLock.value[3] == false){
+        sharedLock.value={1:true, 2:true, 3:false, 4:true}
+        activeScroll.value = 3
+        offsetY.value = event.contentOffset.y;
+        sharedLock.value={1:false, 2:false, 3:false, 4:false}
+        }
+
+});
+
+    const scrollHandler4 = useAnimatedScrollHandler((event)=> {
+        if(sharedLock.value[4] == false){
+            sharedLock.value={1:true, 2:true, 3:true, 4:false}
+            activeScroll.value = 4
+            offsetY.value = event.contentOffset.y;
+            sharedLock.value={1:false, 2:false, 3:false, 4:false}
+        }
+        
+    })
+
+
+
+      useDerivedValue(() => {
+        if(activeScroll.value == 1){
+            scrollTo(xRef2, offsetX.value,0, false);
+            activeScroll.value = null
+        }else if(activeScroll.value == 2){
+            scrollTo(xRef1, offsetX.value,0, false);
+            activeScroll.value = null
+        }
+        else if(activeScroll.value == 3){
+            scrollTo(yRef2, 0, offsetY.value, false)
+            activeScroll.value = null
+        }else if(activeScroll.value == 4){
+            scrollTo(yRef1, 0, offsetY.value, false)
+            activeScroll.value = null
+        }
+
+      },[offsetX, offsetY])
+
     
-    const testResources = [
-        "Pyykkikone 1", "Pyykkikone 2"
-    ]
-    const [resource, setResource] = useState(testResources[0])
     const [loadingState, setLoadingState] = useState(false)
     const [modalVisible, setModalVisible] = useState(false)
     const [delModalVisible, setDelModalVisible] = useState(false)
@@ -37,83 +123,19 @@ export default function Calendar ({user}){
         dataJSON = dataToJSON({data})
         
     }
-    
-    
-    const testReservations = [
-        {
-            "Day":"29.3.2025",
-            "Resources": [
-                {   "Resource": "Pyykkikone 1",
-                    "Reservations":[
-                        {   
-                            "Person":"AP",
-                            "Starting time": "12:00",
-                            "Ending time": "22:00"
-                            
-                        }
-                    ]
-                    
 
-                }
-            ]
-        },
-        {
-            "Day":"28.3.2025",
-            "Resources": [
-                {   "Resource": "Pyykkikone 2",
-                    "Reservations":[
-                        {   
-                            "Person":"AP",
-                            "Starting time": "11.00",
-                            "Ending time": "14.00"
-                            
-                        }
-                    ]
-                    
-
-                }
-            ]
-        },
-        
-    ]
-    const getNextDays = () => {
-        const dayList = []
-        const today= new Date()
-        for(let i = 0; i < 30; i++){
-            const day = new Date(today)
-            day.setDate(today.getDate() + i)
-            let weekDay
-            switch (day.getDay()){
-                case 0:
-                    weekDay = "Su"
-                    break
-                case 1:
-                    weekDay = "Ma"
-                    break
-                case 2:
-                    weekDay = "Ti"
-                    break
-                case 3:
-                    weekDay = "Ke"
-                    break
-                case 4:
-                    weekDay = "To"
-                    break
-                case 5:
-                    weekDay = "Pe"
-                    break
-                case 6:
-                    weekDay = "La"
-            }
-            const dayString = weekDay + " " + day.getDate().toString()+"."+(day.getMonth() +1).toString()+"."
-            const reservationDay = day.getDate().toString()+"."+(day.getMonth() +1).toString()+"."+day.getFullYear()
-            dayList.push(
-                {"dayHeader":dayString, "dayReservation":reservationDay})
+    useEffect(() => {
+        if(modalVisible || delModalVisible){
+            console.log("Modaali näkyvissä")
+            setClockState(false)
+            setStoppedText("Clock stopped")
+        }else{
+            console.log("Ei modaalia")
+            setClockState(true)
+            setStoppedText("")
         }
-        return dayList
-    }
-
-    const daysToShow = getNextDays()
+    },[modalVisible, delModalVisible])
+    
 
     
 
@@ -272,14 +294,19 @@ export default function Calendar ({user}){
                 behavior={'height'}
                 style={styles.mainColumn}>
                 <Text>{"Käyttäjä: "}{user}</Text>
+                <Clock setFullClock={setFullClock} clockState={clockState}/>
+                <Text>{stoppedText}</Text>
                 <View style={styles.resourcePicker}>
             <ResourcePicker resources={testResources} resource= {resource} setResource={setResource}/>
             </View>
-        <View style={styles.container}>
-            {/*<WithOutCanvases resource={resource} dataJSON={dataJSON} daysToShow={daysToShow}/>*/}
-            <TimeLabels/>
-            <Canvases/>
-            </View>
+        <View style={styles.calRow}>
+        <TimeLabels yRef1={yRef1} scrollHandler3={scrollHandler3}/>
+        <View styles={styles.calColumn}>
+        <DayHeaders xRef={xRef1} scrollHandler={scrollHandler1}/>
+        <WithOutCanvases fullClock={fullClock} yRef2={yRef2} xRef={xRef2} scrollHandler4={scrollHandler4} scrollHandlerX={scrollHandler2} daysToShow={daysToShow} resource={resource} dataJSON={dataJSON}/></View>
+        </View>
+            {/*<TimeLabels/>
+            <Canvases/>*/}
             <View style={styles.modals}>
             <CalendarModal person={user} resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
             <DeleteModal person={user} resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
@@ -288,17 +315,25 @@ export default function Calendar ({user}){
             <View style={styles.buttonView}>
             <Button style={styles.button} title="Varaa aika"
             color= "green"
-            onPress={() => setModalVisible(true)
+            onPress={() => {
+                setModalVisible(true)}
             }/>
             
             </View>
             <View style={styles.buttonView}>
-            <Button style={styles.button} title="Poista aika" color="green" onPress={() => setDelModalVisible(true)}/></View></View>
+            <Button style={styles.button} title="Poista aika" color="green" onPress={() => 
+                {setDelModalVisible(true)}}/></View></View>
             </KeyboardAvoidingView>
     )
 }
 
 const styles = StyleSheet.create({
+    calColumn: {
+
+    },
+    calRow: {
+        flexDirection:"row"
+    },
     columnCenterView: {
         flexDirection: "column",
         justifyContent: "center"
@@ -328,7 +363,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     buttonRow: {
-        marginTop: canvasHeight+70,
+        marginTop: 20,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },

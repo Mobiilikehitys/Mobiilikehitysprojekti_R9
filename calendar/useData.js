@@ -8,7 +8,6 @@ function useData (target) {
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const tempReservations = []
             querySnapshot.forEach((doc) => {
-                console.log(doc.id)
                 tempReservations.push({...doc.data(), id: doc.id})
             })
             setData(tempReservations)

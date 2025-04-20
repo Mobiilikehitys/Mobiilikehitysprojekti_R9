@@ -92,12 +92,6 @@ function checkOldReservations (dataJSON, resource, startDate, clockStart, endDat
     endComplete.setHours(clockEnd.getHours())
     endComplete.setMinutes(clockEnd.getMinutes())
 
-    console.log("startComplete:",startComplete)
-    console.log("endComplete:",endComplete)
-
-    console.log("clockStart:",clockStart)
-    console.log("clockEnd:", clockEnd)
-
     const maxDays = 7
     const dateList = []
     let dayIteration = new Date()
@@ -177,15 +171,11 @@ function checkCurrentTime(startDate, startTime){
     const startDate2 = startDate.getDate()
 
     if(todayTime > startDateTime && todayDate != startDate2){
-        console.log("date ennen nykyhetkeä")
-        console.log("Tämä päivä:", today.getTime())
-        console.log("Startti päivä", startDate.getTime())
         return false
     }
     const startTimeMinutes = startTime.getHours()*60+startTime.getMinutes()
     const nowTimeMinutes =today.getHours()*60+today.getMinutes()
     if(todayDate == startDate2 && nowTimeMinutes > startTimeMinutes){
-        console.log("Kellonajat väärin")
         return false
     }
     return true
