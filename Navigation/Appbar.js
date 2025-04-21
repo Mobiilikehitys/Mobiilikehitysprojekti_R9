@@ -86,17 +86,19 @@ export default function AppBar() {
           leadingIcon="account"
           style={activeMenu === 'Tiedot' ? styles.activeMenuItem : null}
         />
+        {user?.accountType === "company" && (
+          <Menu.Item
+            onPress={() => handleMenuPress('Resurssien hallinta')}
+            title="Resurssien hallinta"
+            leadingIcon="application-cog"
+            style={activeMenu === 'Resurssien hallinta' ? styles.activeMenuItem : null}
+          />
+        )}
         <Menu.Item
           onPress={() => handleMenuPress('Kirjaudu ulos')}
           title="Kirjaudu ulos"
           leadingIcon="logout"
           style={activeMenu === 'Kirjaudu ulos' ? styles.activeMenuItem : null}
-        />
-        <Menu.Item
-          onPress={() => handleMenuPress('Resurssien hallinta')}
-          title="Resurssien hallinta"
-          leadingIcon="application-cog"
-          style={activeMenu === 'Resurssien hallinta' ? styles.activeMenuItem : null}
         />
       </Menu>
     </Appbar.Header>
