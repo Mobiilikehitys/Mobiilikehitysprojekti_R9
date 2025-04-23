@@ -31,6 +31,7 @@ export {
   BULLETINS,
   MARKETPRODUCTS,
   NOTIFICATIONS,
+  MANAGEDRESOURCES,
   query,
   onSnapshot,
   addDoc,

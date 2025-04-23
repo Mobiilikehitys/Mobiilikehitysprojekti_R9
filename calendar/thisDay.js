@@ -9,7 +9,6 @@ function thisDay () {
 function thisDayByMinutes () {
     const today = new Date()
     const clock = today.getHours().toString()+ ":"+today.getMinutes().toString()
-    console.log("Clock", clock)
     return timeToMinutes(clock)
 }
 

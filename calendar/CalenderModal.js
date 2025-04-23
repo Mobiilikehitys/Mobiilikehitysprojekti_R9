@@ -5,17 +5,18 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import reservation from './reservation'
 import useData from './useData'
 import dataToJSON from './dataToJSON'
-import { RESERVATIONS } from '../firebase/Config'
+import { MANAGEDRESOURCES, RESERVATIONS } from '../firebase/Config'
 
 
-export default function CalendarModal ({person, resources, modalVisible, setModalVisible}) {
+export default function CalendarModal ({fullClock, person, resources, modalVisible, setModalVisible}) {
 
-    const initClockStart = new Date()
-    initClockStart.setMinutes(initClockStart.getMinutes() +2)
-    const initClockEnd = new Date()
-    initClockEnd.setHours(initClockEnd.getHours()+1)
+    const initClockStart1 = new Date(fullClock)
+    initClockStart1.setMinutes(initClockStart1.getMinutes() + 3)
+    const initClockEnd1 = new Date(initClockStart1)
+    initClockEnd1.setHours(initClockEnd1.getHours() + 1)
+    
 
-    const [resource, setResource] = useState(resources[0])
+    const [resource, setResource] = useState(null)
     const [startDate, setStartDate] = useState(new Date())
     const [endDate, setEndDate] = useState(new Date())
 
@@ -24,18 +25,32 @@ export default function CalendarModal ({person, resources, modalVisible, setModa
     const [startTime, setStartTime] = useState(null)
     const [endTime, setEndTime] = useState(null)
 
-    const [clockStart, setClockStart] = useState(initClockStart)
-    const [clockEnd, setClockEnd] = useState(initClockEnd)
+    const [clockStart, setClockStart] = useState(initClockStart1)
+    const [clockEnd, setClockEnd] = useState(initClockEnd1)
     const [showClockStart, setShowClockStart] = useState(false)
     const [showClockEnd, setShowClockEnd] = useState(false)
 
-    
+    useEffect(() => {
+        if(resources && resources.length > 0){
+            setResource(resources[0])
+        }
+    }, [resources])
 
+    useEffect(() => {
+        if(fullClock){
+        const initClockStart = new Date(fullClock)
+        initClockStart.setMinutes(initClockStart.getMinutes() + 3)
+        const initClockEnd = new Date(initClockStart)
+        initClockEnd.setHours(initClockEnd.getHours() + 1)
+        setClockStart(initClockStart)
+        setClockEnd(initClockEnd)
+        }
+    }, [fullClock])
 
     const [reserSuccess, setReserSuccess] = useState(null)
   
     const data = useData(RESERVATIONS)
-    
+    const data2 = useData(MANAGEDRESOURCES)
 
 
 
@@ -162,11 +177,13 @@ export default function CalendarModal ({person, resources, modalVisible, setModa
             <View style={styles.buttons}>
             <View style={styles.button}>
             <Button title="Varaa"
-            onPress={() => {reservation({data, reserSuccess, setReserSuccess ,resource, person, startDate, clockStart, endDate, clockEnd})}}/>
+            color={'#ff6b6b'}
+            onPress={() => {reservation({data,data2, reserSuccess, setReserSuccess ,resource, person, startDate, clockStart, endDate, clockEnd})}}/>
             </View>
             <View style={styles.button}>
 
             <Button title="Sulje"
+            color={'#ff6b6b'}
             onPress={() => closeModal()}/>  
             </View>
             

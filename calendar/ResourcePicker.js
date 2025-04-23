@@ -1,6 +1,5 @@
 import { StyleSheet, View } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import {useEffect, useState} from 'react'
 
 export default function ResourcePicker({resources, resource, setResource}){
     return(

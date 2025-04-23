@@ -9,9 +9,10 @@ import { convertFirebaseTimeStampJS } from "./serverTimeStampToJSON";
 import Icon from 'react-native-vector-icons/FontAwesome'
 import deleteItem from "../firebase/Delete";
 import CommentModal from "./newCommentModal";
+import { useAuth } from "../context/AuthContext";
 
-
-export default function Board({user}){
+export default function Board(){
+    const { user } = useAuth()
     const [modalVisible, setModalVisible] = useState(false)
     const oldData = useDataOrder(collection(firestore, BULLETINS))
     const [comModalVisible, setComModalVisible] = useState(false)
@@ -19,17 +20,21 @@ export default function Board({user}){
 
 
     const deleteItemFully = async (id) => {
-        console.log("DeleteItemFully started")
-        const bulletRef = collection(firestore, BULLETINS, id, "comments")
-        const querySnapshot = await getDocs(bulletRef)
-        querySnapshot.forEach(async (doc) => {
-            console.log("deleteitemFully:", doc.id)
-            await deleteDoc(doc(firestore, BULLETINS, id, "comments", doc.id))
-        })
-        
-        deleteItem(BULLETINS, id)
-        console.log("Item fully deleted")
-    }
+        console.log("DeleteItemFully started");
+        try {
+            const bulletRef = collection(firestore, BULLETINS, id, "comments");
+            const querySnapshot = await getDocs(bulletRef);
+            querySnapshot.forEach(async (doc) => {
+                console.log("Deleting comment:", doc.id);
+                await deleteDoc(doc(firestore, BULLETINS, id, "comments", doc.id));
+            });
+    
+            await deleteDoc(doc(firestore, BULLETINS, id)); 
+            console.log("Bulletin fully deleted");
+        } catch (error) {
+            console.error("Error deleting bulletin:", error);
+        }
+    };
 
     const showComments = (id) => {
         const tempJSON = {...commentsVisible}
@@ -55,35 +60,50 @@ export default function Board({user}){
 
 
     const RenderItem = (item) => {
-        const timeStamp = convertFirebaseTimeStampJS(item.luotu)
-        return(
+        const timeStamp = convertFirebaseTimeStampJS(item.luotu);
+        return (
             <View style={styles.renderItem}>
-            <View style={styles.centerView}>
-        <View style={styles.bulletin}>
-            <View style={styles.createdView}>
-            <Text style={styles.createdText}>{item.henkilo}{" "}{timeStamp}</Text></View>
-            {item.henkilo == user && <View style={styles.closeButton}><Pressable onPress={() => {deleteItemFully(item.id)}}>
-                <Icon name="times" size={30} color="#000" /></Pressable></View>}
-                {item.otsikko && <View style={styles.headerView}><Text style={styles.headerText}>{item.otsikko}</Text></View>}
-                <View style={styles.messageView}><Text style={styles.messageText}>{item.viesti}</Text></View>
-                <View style={styles.bottomLine}>
-                <Pressable onPress={() => setComModalVisible(true)}><Text>Kommentoi</Text></Pressable>
-                {commentsVisible[item.id] ?<Pressable onPress={() => showComments(item.id)}><Text>Piilota kommentit</Text></Pressable> :<Pressable onPress={() => showComments(item.id)}><Text>Näytä kommentit</Text></Pressable>}
+                <View style={styles.centerView}>
+                    <View style={styles.bulletin}>
+                        <View style={styles.createdView}>
+                            <Text style={styles.createdText}>{item.henkilo}{" "}{timeStamp}</Text>
+                        </View>
+                        {user?.accountType === 'company' ? (
+                            <View style={styles.closeButton}>
+                                <Pressable style={styles.close2} onPress={() => { deleteItemFully(item.id); }}>
+                                    <Icon name="trash" size={30} color="black" />
+                                </Pressable>
+                            </View>
+                        ) : (
+                            
+                            item.henkilo === user.email && (
+                                <View style={styles.closeButton}>
+                                    <Pressable style={styles.close2} onPress={() => { deleteItemFully(item.id); }}>
+                                        <Icon name="times" size={30} color="black" />
+                                    </Pressable>
+                                </View>
+                            )
+                        )}
+                        {item.otsikko && (
+                            <View style={styles.headerView}>
+                                <Text style={styles.headerText}>{item.otsikko}</Text>
+                            </View>
+                        )}
+                        <View style={styles.messageView}>
+                            <Text style={styles.messageText}>{item.viesti}</Text>
+                        </View>
+                    </View>
                 </View>
-                {commentsVisible[item.id] && <Comments docID={item.id}/>}
-                <CommentModal user={user} header={item.otsikko} documentId={item.id} modalVisible={comModalVisible} setModalVisible={setComModalVisible}/>
-        </View>
-        </View>
-
-        
-        </View>)
-    }
+            </View>
+        );
+    };
     return(
         <View style={styles.centerView}>
             <View style={styles.centerView}>
             <View>
             <View style={styles.button}>
             <Button title="Uusi ilmoitus"
+            color='#ff6b6b'
             onPress={() => setModalVisible(true)}/></View>
             <FlatList
                         data={oldData}
@@ -100,6 +120,10 @@ export default function Board({user}){
 }
 
 const styles = StyleSheet.create({
+    close2: {
+        height: 40,
+        width: 40
+    },
     commentText: {
         marginLeft: 10
     },
@@ -118,15 +142,20 @@ const styles = StyleSheet.create({
     },
     headerView: {
         marginLeft: 10,
-        marginTop: 5
+        marginTop: 5,
+        backgroundColor: '#f9f9f9',
+        marginRight: 10,
+
     },
     headerText: {
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        
     },
     centerView: {
         flexDirection: "row",
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: '#f9f9f9'
     },
     button: {
         marginTop: 5,
@@ -135,15 +164,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     messageView: {
-        padding: 10
+        margin: 10,
+
     },
     createdView: {
-        paddingLeft: 10
+        paddingLeft: 10,
     },
     closeButton: {
         position: 'absolute',
         top: 0,
-        right: 5
+        right: 5,
+        height: 40,
+        width: 40,
+        zIndex: 10,
+        elevation: 10
     },
     bulletin: {
         marginTop: 5,
@@ -151,17 +185,23 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
         paddingBottom: 5,
-        backgroundColor: "rgb(20, 167, 215)",
+        backgroundColor: '#f9f9f9',
         borderRadius: 10,
-        width: 300
+        width: 300,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     flatlistContainer:{
 
     },
     messageText:{
-        fontSize: 15
+        fontSize: 15,
     },
     createdText: {
-        fontSize: 10
+        fontSize: 10,
+        color: '#ff6b6b'
     },
 })

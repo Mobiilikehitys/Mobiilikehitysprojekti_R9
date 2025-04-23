@@ -6,7 +6,7 @@ export default function newBulletin (setPostSuccess , user, header, message) {
         console.log("newBulletin-save-funktio")
         try{
         const docRef = await addDoc(collection(firestore, BULLETINS), {
-            henkilo: user,
+            henkilo: user.email,
             otsikko: header,
             luotu: serverTimestamp(),
             viesti: message })
