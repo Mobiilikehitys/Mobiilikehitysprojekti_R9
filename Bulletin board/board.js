@@ -9,9 +9,10 @@ import { convertFirebaseTimeStampJS } from "./serverTimeStampToJSON";
 import Icon from 'react-native-vector-icons/FontAwesome'
 import deleteItem from "../firebase/Delete";
 import CommentModal from "./newCommentModal";
+import { useAuth } from "../context/AuthContext";
 
-
-export default function Board({user}){
+export default function Board(){
+    const { user } = useAuth()
     const [modalVisible, setModalVisible] = useState(false)
     const oldData = useDataOrder(collection(firestore, BULLETINS))
     const [comModalVisible, setComModalVisible] = useState(false)
@@ -19,17 +20,21 @@ export default function Board({user}){
 
 
     const deleteItemFully = async (id) => {
-        console.log("DeleteItemFully started")
-        const bulletRef = collection(firestore, BULLETINS, id, "comments")
-        const querySnapshot = await getDocs(bulletRef)
-        querySnapshot.forEach(async (doc) => {
-            console.log("deleteitemFully:", doc.id)
-            await deleteDoc(doc(firestore, BULLETINS, id, "comments", doc.id))
-        })
-        
-        deleteItem(BULLETINS, id)
-        console.log("Item fully deleted")
-    }
+        console.log("DeleteItemFully started");
+        try {
+            const bulletRef = collection(firestore, BULLETINS, id, "comments");
+            const querySnapshot = await getDocs(bulletRef);
+            querySnapshot.forEach(async (doc) => {
+                console.log("Deleting comment:", doc.id);
+                await deleteDoc(doc(firestore, BULLETINS, id, "comments", doc.id));
+            });
+    
+            await deleteDoc(doc(firestore, BULLETINS, id)); 
+            console.log("Bulletin fully deleted");
+        } catch (error) {
+            console.error("Error deleting bulletin:", error);
+        }
+    };
 
     const showComments = (id) => {
         const tempJSON = {...commentsVisible}
@@ -55,29 +60,43 @@ export default function Board({user}){
 
 
     const RenderItem = (item) => {
-        const timeStamp = convertFirebaseTimeStampJS(item.luotu)
-        return(
+        const timeStamp = convertFirebaseTimeStampJS(item.luotu);
+        return (
             <View style={styles.renderItem}>
-            <View style={styles.centerView}>
-        <View style={styles.bulletin}>
-            <View style={styles.createdView}>
-            <Text style={styles.createdText}>{item.henkilo}{" "}{timeStamp}</Text></View>
-            {item.henkilo == user && <View style={styles.closeButton}><Pressable onPress={() => {deleteItemFully(item.id)}}>
-                <Icon name="times" size={30} color="#000" /></Pressable></View>}
-                {item.otsikko && <View style={styles.headerView}><Text style={styles.headerText}>{item.otsikko}</Text></View>}
-                <View style={styles.messageView}><Text style={styles.messageText}>{item.viesti}</Text></View>
-                <View style={styles.bottomLine}>
-                <Pressable onPress={() => setComModalVisible(true)}><Text>Kommentoi</Text></Pressable>
-                {commentsVisible[item.id] ?<Pressable onPress={() => showComments(item.id)}><Text>Piilota kommentit</Text></Pressable> :<Pressable onPress={() => showComments(item.id)}><Text>Näytä kommentit</Text></Pressable>}
+                <View style={styles.centerView}>
+                    <View style={styles.bulletin}>
+                        <View style={styles.createdView}>
+                            <Text style={styles.createdText}>{item.henkilo}{" "}{timeStamp}</Text>
+                        </View>
+                        {user?.accountType === 'company' ? (
+                            <View style={styles.closeButton}>
+                                <Pressable onPress={() => { deleteItemFully(item.id); }}>
+                                    <Icon name="trash" size={30} color="#ff6b6b" />
+                                </Pressable>
+                            </View>
+                        ) : (
+                            
+                            item.henkilo === user.email && (
+                                <View style={styles.closeButton}>
+                                    <Pressable onPress={() => { deleteItemFully(item.id); }}>
+                                        <Icon name="times" size={30} color="#000" />
+                                    </Pressable>
+                                </View>
+                            )
+                        )}
+                        {item.otsikko && (
+                            <View style={styles.headerView}>
+                                <Text style={styles.headerText}>{item.otsikko}</Text>
+                            </View>
+                        )}
+                        <View style={styles.messageView}>
+                            <Text style={styles.messageText}>{item.viesti}</Text>
+                        </View>
+                    </View>
                 </View>
-                {commentsVisible[item.id] && <Comments docID={item.id}/>}
-                <CommentModal user={user} header={item.otsikko} documentId={item.id} modalVisible={comModalVisible} setModalVisible={setComModalVisible}/>
-        </View>
-        </View>
-
-        
-        </View>)
-    }
+            </View>
+        );
+    };
     return(
         <View style={styles.centerView}>
             <View style={styles.centerView}>
