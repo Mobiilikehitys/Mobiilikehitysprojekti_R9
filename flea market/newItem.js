@@ -6,7 +6,7 @@ export default function newItem (user, product, price, message) {
     const save = async () => {
         try{
         const docRef = await addDoc(collection(firestore, MARKETPRODUCTS), {
-            henkilo: user,
+            henkilo: user.email,
             tuote: product,
             hinta: price,
             luotu: serverTimestamp(),
