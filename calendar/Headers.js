@@ -1,7 +1,7 @@
 import {View, Text, StyleSheet } from "react-native"
-import getNextDays from "./nextDays"
+import {getNextDays} from "./nextDays"
 import Animated, {useSharedValue,useAnimatedScrollHandler} from "react-native-reanimated"
-import { canvasHeight, headerHeight, timeLabelHeight, canvasWidth, timeScreenSize } from "./CanvasSizes"
+import { canvasHeight, headerHeight, timeLabelHeight, canvasWidth, timeScreenSize, throttle } from "./CanvasSizes"
 
 const TimeLabels = ({scrollHandler3, yRef1}) => {
     const list = []
@@ -14,9 +14,10 @@ const TimeLabels = ({scrollHandler3, yRef1}) => {
         <View style={styles.timeLabelsMain}>
         <Animated.ScrollView
         contentContainerStyle={styles.timeMain}
-        scrollEventThrottle={16}
+        scrollEventThrottle={throttle}
         onScroll={scrollHandler3}
         ref={yRef1}
+        decelerationRate={'fast'}
         >
         <View style={styles.timeMap}>
         {list.map((time, index) => (
@@ -35,8 +36,9 @@ const DayHeaders = ({xRef, scrollHandler}) => {
         horizontal
         ref={xRef}
         onScroll={scrollHandler}
-        scrollEventThrottle={16}
+        scrollEventThrottle={throttle}
         contentContainerStyle={styles.dayHeadersCCS}
+        decelerationRate={'fast'}
         >
         {days.map((day,index) => (
             <View key={index} style={styles.daysMap}>

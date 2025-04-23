@@ -11,18 +11,21 @@ export default function dataToJSON({data}) {
         const endDate = r.lopetuspaiva
         const endTime = r.lopetusaika
         const person = r.henkilo
+        const id = r.id
         //Palautus: day, Resource, person, start time, end time
         //jos päivärajat ylittyvät, jaetaan varaus eri päiville
         const dateList = dates(startDate, endDate)
         let oneJSON = {}       
-        for(let i=0; i < dateList.length; i++){
-        }
         let dayAlready
 
         for(let i = 0; i < dateList.length; i++){
-
+                let resIndex
                 const day = dateList[i].getDate().toString()+"."+(dateList[i].getMonth()+1).toString()+"."+dateList[i].getFullYear().toString()
-                const dayInReturnJSON = returnJSON.find(reservationDay => reservationDay.Day == day)
+                const dayInReturnJSON = returnJSON.find((reservationDay,index) => {if(reservationDay.Day == day){
+                    resIndex=index
+                    return true
+                }
+                return false})
                 if(!dayInReturnJSON){
                 oneJSON['Day'] = day
                 oneJSON['Resources'] = []
@@ -31,14 +34,21 @@ export default function dataToJSON({data}) {
                 
                 }else{
                     dayAlready = true
-                }
+                    if(!returnJSON[resIndex]['Resources'].find(res => res.Resource == resource)){
+                        returnJSON[resIndex]['Resources']=[...returnJSON[resIndex]['Resources'], {'Resource':resource, 'Reservations':[]}]
+                    }
+                    
+                    
+                }   
                 
 
                 if(!dayAlready){
-                const resourceInResources = oneJSON['Resources'].find(resourceFind => resourceFind.Resource == resource)
-                if(!resourceInResources){
-                oneJSON['Resources']=[...oneJSON['Resources'], {'Resource':resource, 'Reservations':[]}] 
-                }}
+                    const resourceInResources = oneJSON['Resources'].find(resourceFind => resourceFind.Resource == resource)
+                    if(!resourceInResources){
+                    oneJSON['Resources']=[...oneJSON['Resources'], {'Resource':resource, 'Reservations':[]}] 
+                }}else{
+                    
+                }
 
                 
 
@@ -53,20 +63,23 @@ export default function dataToJSON({data}) {
                 reservation = {
                     "Person":person,
                     "Starting time": startTime,
-                    "Ending time": endTime
+                    "Ending time": endTime,
+                    "id": id
                 }
                
             }else if(i == 0 && i != (dateList.length-1) ){
                 reservation = {
                     "Person":person,
                     "Starting time": startTime,
-                    "Ending time": "24:00"
+                    "Ending time": "24:00",
+                    "id": id
                 }
             }else if(i != dateList.length-1){
                 reservation = {
                     "Person":person,
                     "Starting time": "0:00",
-                    "Ending time": "24:00"
+                    "Ending time": "24:00",
+                    "id": id
                 }
                 
             }else if(i == dateList.length-1){
@@ -74,7 +87,8 @@ export default function dataToJSON({data}) {
                     reservation = {
                         "Person":person,
                         "Starting time": "0:00",
-                        "Ending time": endTime
+                        "Ending time": endTime,
+                        "id":id
                     }
                 }else{
                     endTime0 = true

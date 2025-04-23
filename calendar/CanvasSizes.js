@@ -3,7 +3,7 @@ const canvasWidth = 90
 const topMargin = 0
 const startMargin = 35
 const headerFont = 15
-const throttle = 10
+const throttle = 40
 const headerHeight = 20
 
 const timeLabelHeight = 950

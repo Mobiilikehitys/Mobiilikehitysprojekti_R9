@@ -12,23 +12,26 @@ import { RESERVATIONS } from '../firebase/Config';
 import { canvasHeight, canvasWidth, startMargin, topMargin, header, headerFont } from './CanvasSizes';
 import WithOutCanvases from './WithOutCanvases';
 import { TimeLabels, DayHeaders } from './Headers';
-import getNextDays from './nextDays';
-import { testReservations, testResources } from './TestiResurssit';
+import {getNextDays} from './nextDays';
 import Clock from './Kello';
 import Animated, { useAnimatedScrollHandler, useSharedValue, useDerivedValue, scrollTo, useAnimatedRef, runOnJS } from 'react-native-reanimated';
-
+import { MANAGEDRESOURCES } from '../firebase/Config';
+import {resourceList} from './handleResources';
 
 
 
 
 export default function Calendar ({user}){
 
-    const [resource, setResource] = useState(testResources[1])
-    const [fullClock, setFullClock] = useState("Loading...")
+    
+    const [fullClock, setFullClock] = useState(null)
     const [clockState, setClockState] = useState(null)
     const [stoppedText, setStoppedText] = useState("")
 
 
+    const resourceData = useData(MANAGEDRESOURCES)
+    const resources = resourceList(resourceData)
+    const [resource, setResource] = useState(null)
 
     const daysToShow = getNextDays()
 
@@ -122,7 +125,14 @@ export default function Calendar ({user}){
     if(data){
         dataJSON = dataToJSON({data})
         
+        
     }
+
+    useEffect(() => {
+        if(resource == null && resources && resources.length > 0){
+            setResource(resources[0])
+        }
+    },[resources])
 
     useEffect(() => {
         if(modalVisible || delModalVisible){
@@ -293,23 +303,26 @@ export default function Calendar ({user}){
                 <KeyboardAvoidingView
                 behavior={'height'}
                 style={styles.mainColumn}>
+                <View style={styles.clockRow}>
                 <Text>{"Käyttäjä: "}{user}</Text>
                 <Clock setFullClock={setFullClock} clockState={clockState}/>
+                </View>
                 <Text>{stoppedText}</Text>
                 <View style={styles.resourcePicker}>
-            <ResourcePicker resources={testResources} resource= {resource} setResource={setResource}/>
+            <ResourcePicker resources={resources} resource={resource} setResource={setResource}/>
             </View>
         <View style={styles.calRow}>
         <TimeLabels yRef1={yRef1} scrollHandler3={scrollHandler3}/>
         <View styles={styles.calColumn}>
         <DayHeaders xRef={xRef1} scrollHandler={scrollHandler1}/>
-        <WithOutCanvases fullClock={fullClock} yRef2={yRef2} xRef={xRef2} scrollHandler4={scrollHandler4} scrollHandlerX={scrollHandler2} daysToShow={daysToShow} resource={resource} dataJSON={dataJSON}/></View>
+        {resource && <WithOutCanvases resourceData={resourceData} user={user} fullClock={fullClock} yRef2={yRef2} xRef={xRef2} scrollHandler4={scrollHandler4} scrollHandlerX={scrollHandler2} daysToShow={daysToShow} resource={resource} dataJSON={dataJSON}/>}
+        </View>
         </View>
             {/*<TimeLabels/>
             <Canvases/>*/}
             <View style={styles.modals}>
-            <CalendarModal person={user} resources={testResources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-            <DeleteModal person={user} resources={testResources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
+            <CalendarModal fullClock={fullClock} person={user} resources={resources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
+            <DeleteModal person={user} resources={resources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
             </View>
             <View style={styles.buttonRow}>
             <View style={styles.buttonView}>
@@ -328,6 +341,10 @@ export default function Calendar ({user}){
 }
 
 const styles = StyleSheet.create({
+    clockRow: {
+        flexDirection:"row",
+        justifyContent: "space-between"
+    },
     calColumn: {
 
     },

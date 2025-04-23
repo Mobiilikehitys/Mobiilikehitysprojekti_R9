@@ -1,43 +1,32 @@
 import { View, StyleSheet, Text, FlatList, Pressable, ScrollView,  } from "react-native";
 import { canvasHeight, canvasWidth, headerHeight, throttle, timeScreenSize } from "./CanvasSizes";
 import timeToMinutes from "./timeToMinutes";
-import React from "react";
-import getNextDays from "./nextDays";
+import React, {useEffect, useState} from "react";
+import { weekDayNumber, getNextDays } from "./nextDays";
 import Animated, {useSharedValue, useAnimatedScrollHandler} from "react-native-reanimated";
+import ReservationModal from "./ReserModal";
+import { resourceList, dayJSON, hourJSON } from "./handleResources";
+import { BlockedTimesModal } from "./timeBlocks";
 
 
 
 
 
 
-export default function WithOutCanvases ({fullClock,yRef2, scrollHandler4, scrollHandlerX, xRef, resource, dataJSON, daysToShow}){
+export default function WithOutCanvases ({resourceData, user, fullClock,yRef2, scrollHandler4, scrollHandlerX, xRef, resource, dataJSON, daysToShow}){
     
-        
-
-    
-         /*const native1 = Gesture.Native()
-         const native2 = Gesture.Native()
-         const scrollOffsetY = useSharedValue(0);
-         const scrollOffsetX = useSharedValue(0)
-         const handleContentScrollY = useAnimatedScrollHandler(({ contentOffset }) => {
-            scrollOffsetY.value = contentOffset.y;
-        }, []);  
-        
-        const handleContentScrollX = useAnimatedScrollHandler(({ contentOffset }) => {
-            scrollOffsetX.value = contentOffset.x;
-        }, []);*/
-
+       
+        const [reserModalVisible, setReserModalVisible] = useState(false)
+        const [reservationData, setReservationData] = useState(null)
+        const [blockedTimes, setBlockedTimes] = useState(false)
 
         const OneDay = ({item}) => {
-
             let dayNow
-            if(fullClock.current){
+            if(fullClock){
                 dayNow = fullClock.getDate().toString()+"."+ (fullClock.getMonth()+1).toString()+"."+fullClock.getFullYear().toString()
             }else{
                 dayNow= "Loading..."
             }
-            
-            
             const reservationData = dataJSON.find(reservation => reservation.Day == item.dayReservation)
             let reservations = []
             let reservationArray = []
@@ -50,15 +39,20 @@ export default function WithOutCanvases ({fullClock,yRef2, scrollHandler4, scrol
 
                 
             }
+
+
             return(
                 
                 <View style={styles.dayCanvas}>
                 <HelpLines />
+                <BlockedTimes item={item}/>
                 {dayNow == item.dayReservation  && <RedLineAndShadow/>}
                     <View style={styles.reservations}>
                     {Array.isArray(reservationArray) && reservationArray.map((data, index) => (
                         <View style={styles.OneDay} key={index}>
-                        <Reservation start={data['Starting time']} end={data['Ending time']} person={data['Person']}/>
+                        {/*<Reservation start={data['Starting time']} end={data['Ending time']} person={data['Person']} id={data['id']}/>*/}
+                        <Reservation data={data}/>
+                        
                         </View>
                     ))}
                     </View>
@@ -69,19 +63,65 @@ export default function WithOutCanvases ({fullClock,yRef2, scrollHandler4, scrol
             )
         }
 
+        const BlockedTimes = ({item}) => {
+            const allowedDays = dayJSON(resourceData)[resource]
+            const allowedClocktimes = hourJSON(resourceData)[resource]
+            const itemDate = item["dayHeader"]
+            const weekday = itemDate.substring(0,2)
+            const dayNumber = weekDayNumber(weekday)
+            let blockDay = false
+            let timeBool
+            if(allowedDays[dayNumber.toString()] == false){
+                blockDay = true
+                return(<Pressable onPress={() => {setBlockedTimes(true)}} style={{position: "absolute", top: 0, left:0, height: canvasHeight, width: canvasWidth, backgroundColor: "grey", zIndex:10, elevation: 10}}></Pressable>)
+            }else{
+                const alku = allowedClocktimes['Alku']
+                const loppu = allowedClocktimes['Loppu']
+                const alkuMinuutteina = timeToMinutes(alku)
+                const loppuMinuutteina = timeToMinutes(loppu)
+                if(alkuMinuutteina < loppuMinuutteina){
+                    timeBool = false
+                }else{
+                    timeBool = true
+                }
+            
+
+                if(timeBool == true){
+                    const startHeight = alkuMinuutteina*canvasHeight/(24*60)
+                    const sizeHeight = (loppuMinuutteina-alkuMinuutteina)*canvasHeight/(24*60)
+                    return(<Pressable onPress={() => {setBlockedTimes(true)}} style={{position: "absolute", top: startHeight, left:0, height: sizeHeight, width:canvasWidth, backgroundColor: "grey", zIndex:10, elevation: 10}}/>)
+                }else{
+                    const startHeight1 = 0
+                    const sizeHeight1 = alkuMinuutteina*canvasHeight/(24*60)
+                    const startHeight2 = loppuMinuutteina*canvasHeight/(24*60)
+                    const sizeHeight2 = (1-loppuMinuutteina/(24*60))*canvasHeight
+                    return(<><Pressable onPress={() => {setBlockedTimes(true)}} style={{position: "absolute", top: startHeight1, left:0, height: sizeHeight1, width:canvasWidth, backgroundColor:"grey", zIndex:10, elevation: 10}}/>
+                        <Pressable onPress={() => {setBlockedTimes(true)}} style={{position: "absolute", top: startHeight2, left:0, height: sizeHeight2, width:canvasWidth, backgroundColor:"grey", zIndex:10, elevation: 10}}/></>
+                    )
+                }}
+
+
+
+
+        }
+
         
 
-        const Reservation = ({start, end, person}) => {
-            const startMinutes = timeToMinutes(start)
-            const endMinutes = timeToMinutes(end)
+        const Reservation = ({data}) => {
+            const startMinutes = timeToMinutes(data['Starting time'])
+            const endMinutes = timeToMinutes(data['Ending time'])
             const startHeight = (canvasHeight)*startMinutes/(24*60)
             const sizeHeight = (canvasHeight)*(endMinutes - startMinutes)/(24*60)
+
             
-            return(
-            <Pressable>
-            <View style={{position: "absolute",top: startHeight, left: 0, height: sizeHeight, width: canvasWidth, backgroundColor: "blue"}}>
-                <Text style={styles.reserText}>{start + "-" + end}</Text>
-            </View></Pressable>)
+            return(<View>
+            {data &&
+            <Pressable onPress={() =>  {
+                setReservationData(data)
+                 setReserModalVisible(true)}}
+                 style={{position: "absolute",top: startHeight, left: 0, height: sizeHeight, width: canvasWidth, backgroundColor: "blue", zIndex:1000, elevation:1000}}>
+                <View><Text style={styles.reserText}>{data['Starting time'] + "-" + data['Ending time']}</Text></View>
+            </Pressable>}</View>)
         
         }
 
@@ -103,7 +143,7 @@ export default function WithOutCanvases ({fullClock,yRef2, scrollHandler4, scrol
         }
 
         const RedLineAndShadow = () => {
-            const currentMinutes = fullClock.current.getHours()*60+fullClock.current.getMinutes()
+            const currentMinutes = fullClock.getHours()*60+fullClock.getMinutes()
             const height1 = currentMinutes*canvasHeight/(24*60)
             return(<View style={styles.RedLineAndShadow}>
                 <View style={{position: "absolute", height:1, width: canvasWidth, left: 0, top:height1, backgroundColor:"red"}}/>
@@ -132,19 +172,23 @@ export default function WithOutCanvases ({fullClock,yRef2, scrollHandler4, scrol
             scrollEventThrottle={throttle}
             nestedScrollEnabled
             ref={yRef2}
-            onScroll={scrollHandler4}>
+            onScroll={scrollHandler4}
+            decelerationRate={"fast"}>
             <Animated.ScrollView 
             horizontal
             nestedScrollEnabled
             ref={xRef}
             onScroll={scrollHandlerX}
             scrollEventThrottle={throttle}
+            decelerationRate={'fast'}
             >
             {daysToShow.map((data,index) => (
             <View style={styles.mapView} key={index}>
             <OneDay item={data}/>
             </View>
         ))}</Animated.ScrollView></Animated.ScrollView>
+        <ReservationModal user={user} setReserModalVisible={setReserModalVisible} reserModalVisible={reserModalVisible} reservationData={reservationData}/>
+        <BlockedTimesModal resource={resource} blockedTimes={blockedTimes} setBlockedTimes={setBlockedTimes}/>
         </View>)
         {/*return(
         

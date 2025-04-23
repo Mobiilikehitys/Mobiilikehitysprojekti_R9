@@ -5,7 +5,13 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
- 
+  apiKey: "AIzaSyDdYThSsO9cyGQGeYTNksiSA16pEY5EBTU",
+  authDomain: "project-app-with-functions.firebaseapp.com",
+  projectId: "project-app-with-functions",
+  storageBucket: "project-app-with-functions.firebasestorage.app",
+  messagingSenderId: "256966699966",
+  appId: "1:256966699966:web:b5fc166e5d81d39afe67ef",
+  measurementId: "G-XP80D5H75B" 
 };
 
 const app = initializeApp(firebaseConfig);
@@ -19,6 +25,7 @@ const RESOURCES = 'resources'
 const BULLETINS = 'bulletins'
 const MARKETPRODUCTS = 'marketproducts'
 const NOTIFICATIONS = 'notifications2'
+const MANAGEDRESOURCES = 'managedresources'
 
 
 
@@ -31,6 +38,7 @@ export {
   BULLETINS,
   MARKETPRODUCTS,
   NOTIFICATIONS,
+  MANAGEDRESOURCES,
   query,
   onSnapshot,
   addDoc,

@@ -35,4 +35,33 @@ const getNextDays = () => {
     return dayList
 }
 
-export default getNextDays
+const weekDayNumber = (weekday) => {
+    switch(weekday){
+        case "Su":
+            return 0
+            break
+        case "Ma":
+            return 1
+            break
+        case "Ti":
+            return 2
+            break
+        case "Ke":
+            return 3
+            break
+        case "To":
+            return 4
+            break
+        case "Pe":
+            return 5
+            break
+        case "La":
+            return 6
+            break
+        default:
+            throw new Error("Weekday error on weekDayNumber")
+            break
+    }
+}
+
+export {getNextDays, weekDayNumber}
