@@ -227,6 +227,14 @@ function checkAllowedDay (startDate, endDate, data, resource){
 }
 
 function checkAllowedClock (startDate, clockStart, endDate, clockEnd, data, resource){
+
+    const clockJSON = hourJSON(data)[resource]
+
+    if(clockJSON['Alku'] == "00:00" && clockJSON['Loppu'] == "24:00"){
+        return true
+    }else if(clockJSON['Alku'] == clockJSON['Loppu']){
+        return true
+    }
     const start = startDate
     start.setHours(clockStart.getHours())
     start.setMinutes(clockStart.getMinutes())
@@ -235,7 +243,7 @@ function checkAllowedClock (startDate, clockStart, endDate, clockEnd, data, reso
     end.setHours(clockEnd.getHours())
     end.setMinutes(clockEnd.getMinutes())
 
-    const clockJSON = hourJSON(data)[resource]
+    
     const rajaAlku =clockJSON['Alku'].split(":")
     const rajaLoppu=clockJSON['Loppu'].split(":")
     

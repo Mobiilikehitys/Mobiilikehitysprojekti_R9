@@ -95,6 +95,7 @@ export default function DeleteModal({person, delModalVisible,setDelModalVisible,
             <View style={styles.closeView}>
             <View style={styles.closeButton}>
         <Button title="Close"
+                color="#ff6b6b"
                 onPress={() => closeModal()}
                 />
                 </View>

@@ -177,11 +177,13 @@ export default function CalendarModal ({fullClock, person, resources, modalVisib
             <View style={styles.buttons}>
             <View style={styles.button}>
             <Button title="Varaa"
+            color={'#ff6b6b'}
             onPress={() => {reservation({data,data2, reserSuccess, setReserSuccess ,resource, person, startDate, clockStart, endDate, clockEnd})}}/>
             </View>
             <View style={styles.button}>
 
             <Button title="Sulje"
+            color={'#ff6b6b'}
             onPress={() => closeModal()}/>  
             </View>
             

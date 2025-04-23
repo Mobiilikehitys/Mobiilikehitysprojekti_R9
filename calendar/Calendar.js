@@ -327,14 +327,14 @@ export default function Calendar ({user}){
             <View style={styles.buttonRow}>
             <View style={styles.buttonView}>
             <Button style={styles.button} title="Varaa aika"
-            color= "green"
+            color= '#ff6b6b'
             onPress={() => {
                 setModalVisible(true)}
             }/>
             
             </View>
             <View style={styles.buttonView}>
-            <Button style={styles.button} title="Poista aika" color="green" onPress={() => 
+            <Button style={styles.button} title="Poista aika" color='#ff6b6b' onPress={() => 
                 {setDelModalVisible(true)}}/></View></View>
             </KeyboardAvoidingView>
     )

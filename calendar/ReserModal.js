@@ -48,8 +48,10 @@ export default function ReservationModal({user, reserModalVisible, setReserModal
         <Text style={styles.text}>{"Aloitus: "}{!handleJSON[reservationData['id']]["sameDay"] &&  handleJSON[reservationData['id']]["startDay"]}{" "}{handleJSON[reservationData['id']]["startTime"]}</Text>
         <Text style={styles.text}>{"Lopetus: "}{!handleJSON[reservationData['id']]["sameDay"] &&  handleJSON[reservationData['id']]["endDay"]}{" "}{handleJSON[reservationData['id']]["endTime"]}</Text></>}
         </View>
-        {reservationData && reservationData['Person'] === user && <Button title = "Poista varaus" onPress={() => deleteReservation(reservationData['id'])}/>}
-        <Button title = "Sulje" onPress={() => setReserModalVisible(false)}/>
+        {reservationData && reservationData['Person'] === user && <Button title = "Poista varaus" color='#ff6b6b' onPress={() => deleteReservation(reservationData['id'])}/>}
+        <Button title = "Sulje"
+        color='#ff6b6b'
+        onPress={() => setReserModalVisible(false)}/>
         </View>
         </View>
         </Modal>

@@ -116,12 +116,22 @@ export default function WithOutCanvases ({resourceData, user, fullClock,yRef2, s
             
             return(<View>
             {data &&
+            user != data['Person'] ?
+            <Pressable onPress={() =>  {
+                setReservationData(data)
+                 setReserModalVisible(true)}}
+                 style={{position: "absolute",top: startHeight, left: 0, height: sizeHeight, width: canvasWidth, backgroundColor: "yellow", zIndex:1000, elevation:1000}}>
+                <View><Text style={styles.reserText}>{data['Starting time'] + "-" + data['Ending time']}</Text></View>
+            </Pressable>:
             <Pressable onPress={() =>  {
                 setReservationData(data)
                  setReserModalVisible(true)}}
                  style={{position: "absolute",top: startHeight, left: 0, height: sizeHeight, width: canvasWidth, backgroundColor: "blue", zIndex:1000, elevation:1000}}>
-                <View><Text style={styles.reserText}>{data['Starting time'] + "-" + data['Ending time']}</Text></View>
-            </Pressable>}</View>)
+                <View>
+                    <Text style={styles.reserText}>Oma varaus</Text>
+                    <Text style={styles.reserText}>{data['Starting time'] + "-" + data['Ending time']}</Text></View>
+            </Pressable>
+            }</View>)
         
         }
 
