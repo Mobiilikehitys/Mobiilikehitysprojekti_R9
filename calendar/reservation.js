@@ -1,12 +1,12 @@
-import { initializeApp } from "firebase/app";
 import { addDoc, collection, firestore, onSnapshot, RESERVATIONS, auth } from "../firebase/Config";
 import { useState } from "react";
 import useData from "./useData";
 import dataToJSON from "./dataToJSON";
 import timeToMinutes from "./timeToMinutes";
 import { newNotification } from "./Notifications/Notifications";
+import { dayJSON, hourJSON } from "./handleResources";
 
-export default function reservation({data, reserSuccess, setReserSuccess,resource, person, startDate, clockStart, endDate, clockEnd}){
+export default function reservation({data,data2, reserSuccess, setReserSuccess,resource, person, startDate, clockStart, endDate, clockEnd}){
     
     const startDateString = startDate.getDate().toString()+"."+(startDate.getMonth()+1).toString()+"."+startDate.getFullYear().toString()
     const endDateString = endDate.getDate().toString()+"."+(startDate.getMonth()+1).toString()+"."+endDate.getFullYear().toString()
@@ -44,20 +44,37 @@ export default function reservation({data, reserSuccess, setReserSuccess,resourc
         return
     }
 
+    const allowedDayTest = checkAllowedDay(startDate, endDate, data2, resource)
+    if(!allowedDayTest){
+        setReserSuccess("Varaus kiellettynä päivänä")
+        return
+    }
+    const allowedClocktimeTest = checkAllowedClock(startDate, clockStart, endDate, clockEnd, data2, resource)
+    if(!allowedClocktimeTest){
+        setReserSuccess("Varaus kiellettynä kellonaikana")
+        return
+    }
+
     const save = async () => {
+    console.log("Save aloitettu")
+    console.log("Save-resurssi:", resource)
     const docRef = await addDoc(collection(firestore, RESERVATIONS), {
         
         henkilo: person,
         resurssi: resource,
-        aloituspaiva: startDateString ,
+        aloituspaiva: startDateString,
         aloitusaika:  startTimeString,
         lopetuspaiva: endDateString,
         lopetusaika: endTimeString,
     })}
 
-    if(timeTest1 && timeTest2 && timeCollasionTest){
-        save()
-        noteTime = new Date()
+        try{
+            save()
+        }catch(error){
+            console.log("Reservation save error:",error)
+        }
+        
+        /*noteTime = new Date()
         noteTime.setDate(startDate.getDate())
         noteTime.setMonth(startDate.getMonth())
         noteTime.setFullYear(startDate.getFullYear())
@@ -70,10 +87,10 @@ export default function reservation({data, reserSuccess, setReserSuccess,resourc
         endTime.setFullYear(endDate.getFullYear())
         endTime.setHours(clockEnd.getHours())
         endTime.setMinutes(clockEnd.getMinutes())
-        newNotification(person,resource, noteTime, endTime)
+        newNotification(person,resource, noteTime, endTime)*/
         setReserSuccess("Varaus onnistui")
 
-    }
+    
     
 }
 
@@ -91,12 +108,6 @@ function checkOldReservations (dataJSON, resource, startDate, clockStart, endDat
     endComplete.setFullYear(endDate.getFullYear())
     endComplete.setHours(clockEnd.getHours())
     endComplete.setMinutes(clockEnd.getMinutes())
-
-    console.log("startComplete:",startComplete)
-    console.log("endComplete:",endComplete)
-
-    console.log("clockStart:",clockStart)
-    console.log("clockEnd:", clockEnd)
 
     const maxDays = 7
     const dateList = []
@@ -161,7 +172,7 @@ function checkTimes (startDate, startTime, endDate, endTime){
     }
     const startTimeMinutes=startTime.getHours()*60+startTime.getMinutes()
     const endTimeMinutes=endTime.getHours()*60+endTime.getMinutes()
-    if(startDate2 == endDate2 && startTimeMinutes >= endTimeMinutes){
+    if(startDate2 == endDate2 && startTimeMinutes > endTimeMinutes){
         return false
     }
     return true
@@ -177,17 +188,83 @@ function checkCurrentTime(startDate, startTime){
     const startDate2 = startDate.getDate()
 
     if(todayTime > startDateTime && todayDate != startDate2){
-        console.log("date ennen nykyhetkeä")
-        console.log("Tämä päivä:", today.getTime())
-        console.log("Startti päivä", startDate.getTime())
         return false
     }
     const startTimeMinutes = startTime.getHours()*60+startTime.getMinutes()
     const nowTimeMinutes =today.getHours()*60+today.getMinutes()
     if(todayDate == startDate2 && nowTimeMinutes > startTimeMinutes){
-        console.log("Kellonajat väärin")
         return false
     }
     return true
+
+}
+
+function checkAllowedDay (startDate, endDate, data, resource){
+    const dayJSON2 = dayJSON(data)[resource]
+    const falseList = []
+    for(let a = 0; a < 7; a++){
+        if(dayJSON2[a.toString()] == false){
+            falseList.push(a)
+        }
+    }
+    if(falseList.length == 0){
+        return true
+    }else{
+        for(let a = 0; a <7; a++){
+            const weekday = startDate.getDay()
+            if(falseList.includes(weekday)){
+                return false
+            }
+            if(weekday == endDate.getDay()){
+                break
+            }
+            startDate.setDate(startDate.getDate()+1)
+        }
+        return true
+    }
+
+    
+}
+
+function checkAllowedClock (startDate, clockStart, endDate, clockEnd, data, resource){
+
+    const clockJSON = hourJSON(data)[resource]
+
+    if(clockJSON['Alku'] == "00:00" && clockJSON['Loppu'] == "24:00"){
+        return true
+    }else if(clockJSON['Alku'] == clockJSON['Loppu']){
+        return true
+    }
+    const start = startDate
+    start.setHours(clockStart.getHours())
+    start.setMinutes(clockStart.getMinutes())
+
+    const end = endDate
+    end.setHours(clockEnd.getHours())
+    end.setMinutes(clockEnd.getMinutes())
+
+    
+    const rajaAlku =clockJSON['Alku'].split(":")
+    const rajaLoppu=clockJSON['Loppu'].split(":")
+    
+    const limitStart = new Date(startDate)
+    limitStart.setHours(parseInt(rajaAlku[0]))
+    limitStart.setMinutes(parseInt(rajaAlku[1]))
+
+    const limitEnd = new Date()
+    limitEnd.setHours(parseInt(rajaLoppu[0]))
+    limitEnd.setMinutes(parseInt(rajaLoppu[1]))
+    if(limitEnd.getTime() < limitStart.getTime()){
+        limitEnd.setDate(limitEnd.getDate() + 1)
+    }
+
+    if(limitStart.getTime() > start.getTime() || limitEnd.getTime() < end.getTime()){
+        return false
+    }
+
+    return true
+    
+
+    
 
 }

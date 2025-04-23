@@ -24,14 +24,14 @@ export default function FleaMarket(){
                     {user?.accountType === "company" && (
                         <View style={styles.closeButton}>
                             <Pressable onPress={() => { deleteItem(MARKETPRODUCTS, item.id); }}>
-                                <Icon name="trash" size={30} color="#ff6b6b" />
+                                <Icon name="trash" size={30} color="black" />
                             </Pressable>
                         </View>
                     )}
-                    {item.henkilo === user.email && (
+                    {user?.accountType !== "company" && item.henkilo === user.email && (
                         <View style={styles.closeButton}>
                             <Pressable onPress={() => { deleteItem(MARKETPRODUCTS, item.id); }}>
-                                <Icon name="times" size={30} color="#000" />
+                                <Icon name="times" size={30} color="black" />
                             </Pressable>
                         </View>
                     )}
@@ -65,6 +65,7 @@ export default function FleaMarket(){
                 <View style={styles.centerView}>
                 <View style={styles.button}>
                 <Button title="Uusi myynti-ilmoitus"
+                color='#ff6b6b'
                 onPress={() => setModalVisible(true)}/></View></View>
                 <FlatList
                             data={oldData}
@@ -97,6 +98,8 @@ const styles = StyleSheet.create({
         fontSize: 15
     },
     button: {
+        paddingTop: 15,
+        paddingBottom: 15,
         width: "80%"
     },
     flatlistContainer: {
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
         paddingBottom: 5,
-        backgroundColor: "rgb(20, 167, 215)",
+        backgroundColor: '#f9f9f9',
         borderRadius: 10,
         width: "90%"
     },
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
 
     },
     createdText: {
-
+        color: '#ff6b6b'
     },
     headerView: {
         marginTop: 10,

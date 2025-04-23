@@ -70,16 +70,16 @@ export default function Board(){
                         </View>
                         {user?.accountType === 'company' ? (
                             <View style={styles.closeButton}>
-                                <Pressable onPress={() => { deleteItemFully(item.id); }}>
-                                    <Icon name="trash" size={30} color="#ff6b6b" />
+                                <Pressable style={styles.close2} onPress={() => { deleteItemFully(item.id); }}>
+                                    <Icon name="trash" size={30} color="black" />
                                 </Pressable>
                             </View>
                         ) : (
                             
                             item.henkilo === user.email && (
                                 <View style={styles.closeButton}>
-                                    <Pressable onPress={() => { deleteItemFully(item.id); }}>
-                                        <Icon name="times" size={30} color="#000" />
+                                    <Pressable style={styles.close2} onPress={() => { deleteItemFully(item.id); }}>
+                                        <Icon name="times" size={30} color="black" />
                                     </Pressable>
                                 </View>
                             )
@@ -103,6 +103,7 @@ export default function Board(){
             <View>
             <View style={styles.button}>
             <Button title="Uusi ilmoitus"
+            color='#ff6b6b'
             onPress={() => setModalVisible(true)}/></View>
             <FlatList
                         data={oldData}
@@ -119,6 +120,10 @@ export default function Board(){
 }
 
 const styles = StyleSheet.create({
+    close2: {
+        height: 40,
+        width: 40
+    },
     commentText: {
         marginLeft: 10
     },
@@ -137,15 +142,20 @@ const styles = StyleSheet.create({
     },
     headerView: {
         marginLeft: 10,
-        marginTop: 5
+        marginTop: 5,
+        backgroundColor: '#f9f9f9',
+        marginRight: 10,
+
     },
     headerText: {
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+        
     },
     centerView: {
         flexDirection: "row",
-        justifyContent: 'center'
+        justifyContent: 'center',
+        backgroundColor: '#f9f9f9'
     },
     button: {
         marginTop: 5,
@@ -154,15 +164,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     messageView: {
-        padding: 10
+        margin: 10,
+
     },
     createdView: {
-        paddingLeft: 10
+        paddingLeft: 10,
     },
     closeButton: {
         position: 'absolute',
         top: 0,
-        right: 5
+        right: 5,
+        height: 40,
+        width: 40,
+        zIndex: 10,
+        elevation: 10
     },
     bulletin: {
         marginTop: 5,
@@ -170,17 +185,23 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
         paddingBottom: 5,
-        backgroundColor: "rgb(20, 167, 215)",
+        backgroundColor: '#f9f9f9',
         borderRadius: 10,
-        width: 300
+        width: 300,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+        elevation: 3,
     },
     flatlistContainer:{
 
     },
     messageText:{
-        fontSize: 15
+        fontSize: 15,
     },
     createdText: {
-        fontSize: 10
+        fontSize: 10,
+        color: '#ff6b6b'
     },
 })

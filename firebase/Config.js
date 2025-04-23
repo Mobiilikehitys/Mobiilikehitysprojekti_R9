@@ -5,7 +5,7 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWith
 
 
 const firebaseConfig = {
-  
+
 };
 
 const app = initializeApp(firebaseConfig);
@@ -19,6 +19,7 @@ const RESOURCES = 'resources'
 const BULLETINS = 'bulletins'
 const MARKETPRODUCTS = 'marketproducts'
 const NOTIFICATIONS = 'notifications2'
+const MANAGEDRESOURCES = 'managedresources'
 
 
 
@@ -31,6 +32,7 @@ export {
   BULLETINS,
   MARKETPRODUCTS,
   NOTIFICATIONS,
+  MANAGEDRESOURCES,
   query,
   onSnapshot,
   addDoc,

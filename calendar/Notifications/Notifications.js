@@ -4,11 +4,8 @@ import deleteItem from "../../firebase/Delete";
 
 
 function newNotification (user, resource, startTime, endTime){
-    console.log("newNotification aloitettu")
 
     const save = async () => {
-        console.log("save aloitettu")
-        console.log("save-time:",time)
         const docRefNow = await addDoc(collection(firestore, NOTIFICATIONS), {
             henkilo: user,
             resurssi: resource,
@@ -16,7 +13,6 @@ function newNotification (user, resource, startTime, endTime){
             lopetusaika: Timestamp.fromDate(endTime),
             muistutusaika: "heti"
         })
-        console.log("First docRef done")
         const now = new Date()
         const diff = time-now
         const diffInMinutes = diff/1000/60
@@ -31,7 +27,6 @@ function newNotification (user, resource, startTime, endTime){
                 lopetusaika: Timestamp.fromDate(endTime),
                 muistutusaika: Timestamp.fromDate(remember)
             })
-            console.log("Second docRef done")
         }
     }
    save()

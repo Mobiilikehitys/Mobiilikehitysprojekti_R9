@@ -3,7 +3,6 @@
 
 export default function dataToJSON({data}) {
     let returnJSON = []
-    console.log("dataToJSON:", data)
     for(r of data){
         //Syöte: resurssi, aloituspäivä, aloutusaika, lopetuspäivä, lopetusaika
         const resource = r.resurssi
@@ -12,22 +11,21 @@ export default function dataToJSON({data}) {
         const endDate = r.lopetuspaiva
         const endTime = r.lopetusaika
         const person = r.henkilo
+        const id = r.id
         //Palautus: day, Resource, person, start time, end time
-        console.log("Dates:", startDate, endDate)
         //jos päivärajat ylittyvät, jaetaan varaus eri päiville
         const dateList = dates(startDate, endDate)
         let oneJSON = {}       
-        for(let i=0; i < dateList.length; i++){
-            console.log("dateList:",i,dateList[i])
-        }
         let dayAlready
 
         for(let i = 0; i < dateList.length; i++){
-
+                let resIndex
                 const day = dateList[i].getDate().toString()+"."+(dateList[i].getMonth()+1).toString()+"."+dateList[i].getFullYear().toString()
-                const dayInReturnJSON = returnJSON.find(reservationDay => reservationDay.Day == day)
-                console.log("dayInReturnJSON:", dayInReturnJSON)
-                console.log("day:",day)
+                const dayInReturnJSON = returnJSON.find((reservationDay,index) => {if(reservationDay.Day == day){
+                    resIndex=index
+                    return true
+                }
+                return false})
                 if(!dayInReturnJSON){
                 oneJSON['Day'] = day
                 oneJSON['Resources'] = []
@@ -35,16 +33,22 @@ export default function dataToJSON({data}) {
 
                 
                 }else{
-                    console.log("dayAlready:", dayAlready)
                     dayAlready = true
-                }
+                    if(!returnJSON[resIndex]['Resources'].find(res => res.Resource == resource)){
+                        returnJSON[resIndex]['Resources']=[...returnJSON[resIndex]['Resources'], {'Resource':resource, 'Reservations':[]}]
+                    }
+                    
+                    
+                }   
                 
 
                 if(!dayAlready){
-                const resourceInResources = oneJSON['Resources'].find(resourceFind => resourceFind.Resource == resource)
-                if(!resourceInResources){
-                oneJSON['Resources']=[...oneJSON['Resources'], {'Resource':resource, 'Reservations':[]}] 
-                }}
+                    const resourceInResources = oneJSON['Resources'].find(resourceFind => resourceFind.Resource == resource)
+                    if(!resourceInResources){
+                    oneJSON['Resources']=[...oneJSON['Resources'], {'Resource':resource, 'Reservations':[]}] 
+                }}else{
+                    
+                }
 
                 
 
@@ -59,20 +63,23 @@ export default function dataToJSON({data}) {
                 reservation = {
                     "Person":person,
                     "Starting time": startTime,
-                    "Ending time": endTime
+                    "Ending time": endTime,
+                    "id": id
                 }
                
             }else if(i == 0 && i != (dateList.length-1) ){
                 reservation = {
                     "Person":person,
                     "Starting time": startTime,
-                    "Ending time": "24:00"
+                    "Ending time": "24:00",
+                    "id": id
                 }
             }else if(i != dateList.length-1){
                 reservation = {
                     "Person":person,
                     "Starting time": "0:00",
-                    "Ending time": "24:00"
+                    "Ending time": "24:00",
+                    "id": id
                 }
                 
             }else if(i == dateList.length-1){
@@ -80,7 +87,8 @@ export default function dataToJSON({data}) {
                     reservation = {
                         "Person":person,
                         "Starting time": "0:00",
-                        "Ending time": endTime
+                        "Ending time": endTime,
+                        "id":id
                     }
                 }else{
                     endTime0 = true
@@ -95,7 +103,6 @@ export default function dataToJSON({data}) {
                 let deepCopy = JSON.parse(JSON.stringify(reservation))
                 if(oneJSON['Resources'][c]['Resource'] == resource){
                     oneJSON['Resources'][c]['Reservations'].push({...deepCopy})
-                    console.log("Resurssi löytyi:", oneJSON['Resources'][c]['Reservations'])
                     break
                 }
            }
@@ -103,20 +110,16 @@ export default function dataToJSON({data}) {
            oneJSON = {}
             }else if(endTime0 == false){
                 let index1
-                console.log("Päivää ei valmiina")
                 for(let b = 0; b<returnJSON.length; b++){
                     if(returnJSON[b]['Day']==day){
-                        console.log("Päivä löytyi")
                         index1 = b
                         break
                     }
                 }
                 for(let a = 0; a < returnJSON[i]['Resources'].length; a++){
                     const newReservation = {...reservation}
-                    console.log("returnJSON-looppi:")
                     if(returnJSON[index1]['Resources'][a]['Resource'] == resource){
                         returnJSON[index1]['Resources'][a]['Reservations']=[...returnJSON[index1]['Resources'][a]['Reservations'], {...newReservation}]
-                        console.log("returnJSON: Reservation:",reservation)
                         break
                     }
                 }
@@ -133,25 +136,21 @@ export default function dataToJSON({data}) {
         
 
     }
-    console.log("returnjson:",returnJSON)
     return returnJSON
 }
 
 function dates(startDate, endDate) {
     const startSplit = startDate.split(".")
     const endSplit = endDate.split(".")
-    console.log("Splits:",startSplit,endSplit)
     const start = new Date()
     const end = new Date()
 
     start.setDate(parseInt(startSplit[0]))
     start.setMonth(parseInt(startSplit[1])-1)
     start.setFullYear(parseInt(startSplit[2]))
-    console.log("Start:",start)
     end.setDate(parseInt(endSplit[0]))
     end.setMonth(parseInt(endSplit[1])-1)
     end.setFullYear(parseInt(endSplit[2]))
-    console.log("End:",end)
     let maxDays = 7
     const dayList = []
     for(let i = 0; i < maxDays; i++){
