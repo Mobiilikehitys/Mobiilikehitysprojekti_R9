@@ -10,7 +10,7 @@ import { MANAGEDRESOURCES, RESERVATIONS } from '../firebase/Config'
 
 export default function CalendarModal ({fullClock, person, resources, modalVisible, setModalVisible}) {
 
-    const initClockStart1 = new Date(fullClock)
+    const initClockStart1 = new Date()
     initClockStart1.setMinutes(initClockStart1.getMinutes() + 3)
     const initClockEnd1 = new Date(initClockStart1)
     initClockEnd1.setHours(initClockEnd1.getHours() + 1)
@@ -30,22 +30,27 @@ export default function CalendarModal ({fullClock, person, resources, modalVisib
     const [showClockStart, setShowClockStart] = useState(false)
     const [showClockEnd, setShowClockEnd] = useState(false)
 
+
     useEffect(() => {
+        console.log("useEffect3")
         if(resources && resources.length > 0){
             setResource(resources[0])
         }
     }, [resources])
 
-    useEffect(() => {
+
+
+    /*const initializeClock = () => {
         if(fullClock){
-        const initClockStart = new Date(fullClock)
-        initClockStart.setMinutes(initClockStart.getMinutes() + 3)
-        const initClockEnd = new Date(initClockStart)
-        initClockEnd.setHours(initClockEnd.getHours() + 1)
-        setClockStart(initClockStart)
-        setClockEnd(initClockEnd)
-        }
-    }, [fullClock])
+            const initClockStart = new Date(fullClock)
+            initClockStart.setMinutes(initClockStart.getMinutes() + 3)
+            const initClockEnd = new Date(initClockStart)
+            initClockEnd.setHours(initClockEnd.getHours() + 1)
+            setClockStart(initClockStart)
+            setClockEnd(initClockEnd)
+            }
+    }
+*/
 
     const [reserSuccess, setReserSuccess] = useState(null)
   

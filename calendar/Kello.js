@@ -17,6 +17,7 @@ export default function Clock({clockState, setFullClock}){
     }
 
     useEffect(() => {
+        console.log("useeffect-kello")
         if(clockState && intervalRef.current === null){
             intervalRef.current = setInterval(tick, 1000)
         }else if (!clockState && intervalRef.current !== null){

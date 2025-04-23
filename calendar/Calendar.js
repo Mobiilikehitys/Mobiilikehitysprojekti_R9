@@ -30,8 +30,8 @@ export default function Calendar ({user}){
 
 
     const resourceData = useData(MANAGEDRESOURCES)
-    const resources = resourceList(resourceData)
     const [resource, setResource] = useState(null)
+    const [resources, setResources] = useState(null)
 
     const daysToShow = getNextDays()
 
@@ -129,12 +129,16 @@ export default function Calendar ({user}){
     }
 
     useEffect(() => {
-        if(resource == null && resources && resources.length > 0){
-            setResource(resources[0])
+        console.log("useEffect1")
+        const resources2 = resourceList(resourceData)
+        if(resource == null && resources2 && resources2.length > 0){
+            setResources(resources2)
+            setResource(resources2[0])
         }
-    },[resources])
+    },[resourceData])
 
     useEffect(() => {
+        console.log("useeffect2")
         if(modalVisible || delModalVisible){
             console.log("Modaali näkyvissä")
             setClockState(false)
@@ -148,7 +152,7 @@ export default function Calendar ({user}){
     
 
     
-
+    /*
     const drawReservations = async (canvas, day) => {
         const ctx = canvas.getContext('2d')
         ctx.clearRect(0, 0, canvasWidth, canvasHeight)
@@ -293,7 +297,7 @@ export default function Calendar ({user}){
                 <View style={styles.canvasesEnd}/>
             </ScrollView>
         )
-    }
+    }*/
     
 
 
@@ -309,7 +313,7 @@ export default function Calendar ({user}){
                 </View>
                 <Text>{stoppedText}</Text>
                 <View style={styles.resourcePicker}>
-            <ResourcePicker resources={resources} resource={resource} setResource={setResource}/>
+            {resource && resources && <ResourcePicker resources={resources} resource={resource} setResource={setResource}/>}
             </View>
         <View style={styles.calRow}>
         <TimeLabels yRef1={yRef1} scrollHandler3={scrollHandler3}/>
@@ -321,8 +325,8 @@ export default function Calendar ({user}){
             {/*<TimeLabels/>
             <Canvases/>*/}
             <View style={styles.modals}>
-            <CalendarModal fullClock={fullClock} person={user} resources={resources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>
-            <DeleteModal person={user} resources={resources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>
+            {resources && <CalendarModal fullClock={fullClock} person={user} resources={resources} modalVisible={modalVisible} setModalVisible={setModalVisible}/>}
+            {resources && <DeleteModal person={user} resources={resources} delModalVisible={delModalVisible} setDelModalVisible={setDelModalVisible}/>}
             </View>
             <View style={styles.buttonRow}>
             <View style={styles.buttonView}>
