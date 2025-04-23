@@ -16,14 +16,14 @@ export default function AppBar() {
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
 
- const handleMenuPress = async (menu) => {
-  setActiveMenu(menu);
-  if (menu === 'Tiedotteet') {
-    await clearHasNew(); 
-  }
-  closeMenu();
-  navigation.navigate(menu);
-};
+  const handleMenuPress = async (menu) => {
+    setActiveMenu(menu);
+    if (menu === 'Tiedotteet') {
+      await clearHasNew();
+    }
+    closeMenu();
+    navigation.navigate(menu);
+  };
   return (
     <Appbar.Header style={styles.appBar}>
       <Appbar.Content title="Taloyhtiö App" titleStyle={styles.title} />
@@ -86,6 +86,14 @@ export default function AppBar() {
           leadingIcon="account"
           style={activeMenu === 'Tiedot' ? styles.activeMenuItem : null}
         />
+        {user?.accountType === "company" && (
+          <Menu.Item
+            onPress={() => handleMenuPress('Resurssien hallinta')}
+            title="Resurssien hallinta"
+            leadingIcon="application-cog"
+            style={activeMenu === 'Resurssien hallinta' ? styles.activeMenuItem : null}
+          />
+        )}
         <Menu.Item
           onPress={() => handleMenuPress('Kirjaudu ulos')}
           title="Kirjaudu ulos"

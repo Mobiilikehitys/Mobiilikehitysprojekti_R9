@@ -74,7 +74,7 @@ export default function reservation({data,data2, reserSuccess, setReserSuccess,r
             console.log("Reservation save error:",error)
         }
         
-        /*noteTime = new Date()
+        noteTime = new Date()
         noteTime.setDate(startDate.getDate())
         noteTime.setMonth(startDate.getMonth())
         noteTime.setFullYear(startDate.getFullYear())
@@ -87,7 +87,7 @@ export default function reservation({data,data2, reserSuccess, setReserSuccess,r
         endTime.setFullYear(endDate.getFullYear())
         endTime.setHours(clockEnd.getHours())
         endTime.setMinutes(clockEnd.getMinutes())
-        newNotification(person,resource, noteTime, endTime)*/
+        newNotification(person,resource, noteTime, startTimeString, endTimeString)
         setReserSuccess("Varaus onnistui")
 
     

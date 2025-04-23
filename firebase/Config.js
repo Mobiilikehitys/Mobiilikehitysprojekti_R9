@@ -1,11 +1,13 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, updateDoc, deleteField, getDocs, deleteDoc  } from "firebase/firestore";
+import { getFirestore, collection, addDoc, query, onSnapshot, serverTimestamp, Timestamp, doc, setDoc, updateDoc, deleteField, getDocs, deleteDoc, orderBy, getDoc } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, createUserWithEmailAndPassword, signOut } from "firebase/auth";
 
 
 
 const firebaseConfig = {
-  
+
+
+
 };
 
 const app = initializeApp(firebaseConfig);
@@ -20,8 +22,6 @@ const BULLETINS = 'bulletins'
 const MARKETPRODUCTS = 'marketproducts'
 const NOTIFICATIONS = 'notifications2'
 const MANAGEDRESOURCES = 'managedresources'
-
-
 
 
 export {
@@ -49,7 +49,9 @@ export {
   updateDoc,
   getDocs,
   deleteDoc,
-  signOut
+  signOut,
+  orderBy,
+  getDoc,
 
 
   

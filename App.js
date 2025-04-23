@@ -21,6 +21,8 @@ import Board from './Bulletin board/board.js';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import KirjauduUlos from './screens/Kirjaudu ulos.js';
 import { AuthProvider } from './context/AuthContext.js';
+import ResurssienHallinta from './screens/ResurssienHallinta.js';
+import FirebaseNotificationListener from './notifications/FirebaseNotificationListener.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -39,25 +41,28 @@ export default function App() {
   return (
     <AuthProvider>
 
-    <SafeAreaProvider>
-      <PaperProvider>
-        <NavigationContainer ref={navigationRef}>
-          {currentRoute !== 'Login' && <AppBar />}
-          <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Aloitus" component={Aloitus} />
-            <Stack.Screen name="Varauskalenteri" component={Varauskalenteri} />
-            <Stack.Screen name="Ilmoitustaulu" component={Ilmoitustaulu} />
-            <Stack.Screen name="Tiedotteet" component={Tiedotteet} />
-            <Stack.Screen name="Talotiedot" component={Talotiedot} />
-            <Stack.Screen name="Kirpputori" component={Kirpputori} />
-            <Stack.Screen name="Tiedot" component={Tiedot} />
-            <Stack.Screen name="Kirjaudu ulos" component={KirjauduUlos} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </PaperProvider>
-    </SafeAreaProvider>
+      <SafeAreaProvider>
+        <PaperProvider>
+          <FirebaseNotificationListener />
+          <NavigationContainer ref={navigationRef}>
+            {currentRoute !== 'Login' && <AppBar />}
+            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Register" component={Register} />
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Aloitus" component={Aloitus} />
+              <Stack.Screen name="Varauskalenteri" component={Varauskalenteri} />
+              <Stack.Screen name="Ilmoitustaulu" component={Ilmoitustaulu} />
+              <Stack.Screen name="Tiedotteet" component={Tiedotteet} />
+              <Stack.Screen name="Talotiedot" component={Talotiedot} />
+              <Stack.Screen name="Kirpputori" component={Kirpputori} />
+              <Stack.Screen name="Tiedot" component={Tiedot} />
+              <Stack.Screen name="Kirjaudu ulos" component={KirjauduUlos} />
+              <Stack.Screen name="Resurssien hallinta" component={ResurssienHallinta} />
+
+            </Stack.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
+      </SafeAreaProvider>
     </AuthProvider>
   );
 }
