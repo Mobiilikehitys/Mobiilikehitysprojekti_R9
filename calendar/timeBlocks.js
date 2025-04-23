@@ -13,6 +13,7 @@ const BlockedTimesModal = ({resource, blockedTimes, setBlockedTimes}) => {
     
 
     useEffect(() => {
+        console.log("useeffect-blockertimesmodal1")
         if(blockData){
         setAllowedDays(dayJSON(blockData)[resource])
         setAllowedHours(hourJSON(blockData)[resource])
@@ -22,6 +23,7 @@ const BlockedTimesModal = ({resource, blockedTimes, setBlockedTimes}) => {
     },[blockData, resource])
     
     useEffect(() => {
+        console.log("useeffect-blockertimesmodal2")
         if(allowedDays){
         const allowedDaysList = []
         if(allowedDays["1"]==true){allowedDaysList.push("Maanantai")}
