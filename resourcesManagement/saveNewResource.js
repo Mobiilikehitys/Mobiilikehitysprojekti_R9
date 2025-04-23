@@ -1,7 +1,9 @@
-import { addDoc, firestore, collection, MANAGEDRESOURCES, serverTimestamp } from "../firebase/Config"
+import { addDoc, firestore, collection, serverTimestamp } from "../firebase/Config"
 
 
-export default function saveNewResource (resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays) {
+export default function saveNewResource (companyId, resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays) {
+
+    const MANAGEDRESOURCES = `companies/${companyId}/resources/`
 
     const save = async () => {
         try{

@@ -22,8 +22,6 @@ const BULLETINS = 'bulletins'
 const MARKETPRODUCTS = 'marketproducts'
 const NOTIFICATIONS = 'notifications2'
 
-const MANAGEDRESOURCES = 'managedresources'
-
 
 export {
   firestore,
@@ -50,7 +48,6 @@ export {
   getDocs,
   deleteDoc,
   signOut,
-  MANAGEDRESOURCES,
   orderBy,
   getDoc,
 

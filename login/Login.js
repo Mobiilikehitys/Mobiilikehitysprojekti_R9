@@ -4,11 +4,12 @@ import { getAuth, signInWithEmailAndPassword,auth,firestore } from "../firebase/
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext.js";
+import { getFcmToken } from "../notifications/getFcmToken.js";
 
 export default function Login() {
   const navigation = useNavigation();
-  const [username, setUsername] = useState("admin@mail.com");
-  const [password, setPassword] = useState("111111");
+  const [username, setUsername] = useState("admin@foo.com");
+  const [password, setPassword] = useState("123456");
   const { setUser } = useAuth();
 
   const signin = async () => {
@@ -33,6 +34,7 @@ export default function Login() {
         userData.accountType = "user";
         userData.profile = userDoc.data();
         setUser(userData); 
+          getFcmToken(userData.uid)
         navigation.navigate("Aloitus");
       } else if (companyDoc.exists()) {
         console.log("Logged in as company");

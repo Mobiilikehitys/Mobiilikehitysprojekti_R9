@@ -40,7 +40,7 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
-#google-services
+#google-services.json
 google-services.json
 
 #firebase admin private key

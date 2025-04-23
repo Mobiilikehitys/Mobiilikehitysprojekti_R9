@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList, Modal, Pressable } from "react-native";
-import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, MANAGEDRESOURCES, orderBy } from "../firebase/Config.js";
+import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, orderBy } from "../firebase/Config.js";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext.js";
 import saveEditedResource from "./saveEditedResource.js";
@@ -8,7 +8,11 @@ import { Picker } from "@react-native-picker/picker";
 import hours from "./hours.js";
 import deleteItem from "../firebase/Delete.js";
 
-export default function EditResourceModal({ user, item }) {
+export default function EditResourceModal({ item }) {
+
+    const { user } = useAuth();
+    const companyId = user.uid
+    const MANAGEDRESOURCES = `companies/${companyId}/resources/`
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -33,8 +37,9 @@ export default function EditResourceModal({ user, item }) {
                 'Tarkista varausajat')
         }
         else {
-        saveEditedResource(item, resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
-        setModalVisible(!modalVisible)}
+            saveEditedResource(companyId, item, resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
+            setModalVisible(!modalVisible)
+        }
     }
 
     const toggleDay = (dayName) => {

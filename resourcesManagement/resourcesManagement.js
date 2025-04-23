@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList, Modal, Pressable } from "react-native";
-import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, MANAGEDRESOURCES, orderBy } from "../firebase/Config.js";
+import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, orderBy } from "../firebase/Config.js";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext.js";
 import NewResourceModal from "./newResourceModal.js";
 import EditResourceModal from "./editResourceModal.js";
+import UsageStatistics from "./usageStatistics.js";
 
-export default function ResourcesManagement({ user }) {
+export default function ResourcesManagement() {
+
+    const { user } = useAuth();
+    const companyId = user.uid
+    const MANAGEDRESOURCES = `companies/${companyId}/resources/`
 
     const [items, setItems] = useState([])
 
     useEffect(() => {
+        console.log("companyid: ", companyId)
         const q = query(collection(firestore, MANAGEDRESOURCES), orderBy('created', 'asc'))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
             const tempitems = []
@@ -44,8 +50,7 @@ export default function ResourcesManagement({ user }) {
                 (item.enabledWeekdays.Sunday ? 'su ' : '')
             }</Text>
             <EditResourceModal item={item} />
-
-
+           
         </View>
     );
 
@@ -59,6 +64,7 @@ export default function ResourcesManagement({ user }) {
                 renderItem={renderItem}
             />
             <NewResourceModal />
+            <UsageStatistics />
         </View>
 
 

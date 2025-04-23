@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList, Modal, Pressable } from "react-native";
-import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, MANAGEDRESOURCES, orderBy } from "../firebase/Config.js";
+import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, orderBy } from "../firebase/Config.js";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext.js";
 import saveNewResource from "./saveNewResource.js";
 import { Picker } from "@react-native-picker/picker";
 import hours from "./hours.js";
 
-export default function NewResourceModal({ user }) {
+export default function NewResourceModal() {
+
+    const { user } = useAuth();
+    const companyId = user.uid
+    const MANAGEDRESOURCES = `companies/${companyId}/resources/`
+
     const [modalVisible, setModalVisible] = useState(false);
 
     const [resourceName, setResourceName] = useState('')
@@ -39,7 +44,7 @@ export default function NewResourceModal({ user }) {
                 'Tarkista varausajat')
         }
         else {
-            saveNewResource(resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
+            saveNewResource(companyId, resourceName, enabledHoursStart, enabledHoursEnd, enabledWeekdays)
             setResourceName('')
             setModalVisible(!modalVisible)
         }

@@ -70,7 +70,7 @@ export default function reservation({data, reserSuccess, setReserSuccess,resourc
         endTime.setFullYear(endDate.getFullYear())
         endTime.setHours(clockEnd.getHours())
         endTime.setMinutes(clockEnd.getMinutes())
-        newNotification(person,resource, noteTime, endTime)
+        newNotification(person,resource, noteTime, startTimeString, endTimeString)
         setReserSuccess("Varaus onnistui")
 
     }
