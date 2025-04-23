@@ -153,7 +153,7 @@ export default function EditResourceModal({ item }) {
                                             {
                                                 text: 'Poista',
                                                 style: 'destructive',
-                                                onPress: () => deleteItem(item.collection, item.id)
+                                                onPress: () => deleteItem(MANAGEDRESOURCES, item.id)
                                             }
                                         ]
                                     );

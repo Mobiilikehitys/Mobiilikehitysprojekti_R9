@@ -21,6 +21,7 @@ const RESOURCES = 'resources'
 const BULLETINS = 'bulletins'
 const MARKETPRODUCTS = 'marketproducts'
 const NOTIFICATIONS = 'notifications2'
+const MANAGEDRESOURCES = 'managedresources'
 
 
 export {

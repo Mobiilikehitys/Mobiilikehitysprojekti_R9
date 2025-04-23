@@ -1,21 +1,15 @@
 import { BarChart } from "react-native-chart-kit";
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, FlatList, Modal, Pressable, Dimensions } from "react-native";
-import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, orderBy, getDoc } from "../firebase/Config.js";
+import { firestore, collection, query, onSnapshot, doc, setDoc, addDoc, getAuth, signInWithEmailAndPassword, serverTimestamp, Timestamp, orderBy, getDoc, MANAGEDRESOURCES } from "../firebase/Config.js";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../context/AuthContext.js";
 
 const screenWidth = Dimensions.get("window").width;
-const companyId = "Gaj885G9LHvIHK46Ls3n"
-const resourceId = "4Cj2ytKKWcOeymTFJCQE"
 
 // tää tais jäädä protoiluasteelle
 
-export default function UsageStatistics() {
-
-    const [modalVisible, setModalVisible] = useState(false);
-
-
+export default function UsageStatistics({ resource }) {
     const [chartData, setChartData] = useState({
         labels: ["MA", "TI", "KE", "TO", "PE", "LA", "SU"],
         datasets: [
@@ -24,63 +18,50 @@ export default function UsageStatistics() {
             },
         ],
     });
+    const [modalVisible, setModalVisible] = useState(false);
+
 
     useEffect(() => {
         const fetchData = async () => {
-            const fetchedData = await fetchResource(companyId, resourceId);
+            try {
+                const docRef = doc(firestore, 'companies', resource.companyId, resource.collection, resource.id);
+                const docSnap = await getDoc(docRef);
 
-            if (fetchedData) {
-                const totalValue = Object.values(fetchedData.reservationsByWeekday).reduce((acc, val) => acc + (val || 0), 0);
-                console.log(totalValue)
-                const updatedData = {
-                    labels: ["MA", "TI", "KE", "TO", "PE", "LA", "SU"],
-                    datasets: [
-                        {
-                            data: [
-                                (fetchedData.reservationsByWeekday.maanantai || 0) / totalValue * 100,
-                                (fetchedData.reservationsByWeekday.tiistai || 0) / totalValue * 100,
-                                (fetchedData.reservationsByWeekday.keskiviikko || 0) / totalValue * 100,
-                                (fetchedData.reservationsByWeekday.torstai || 0) / totalValue * 100,
-                                (fetchedData.reservationsByWeekday.perjantai || 0) / totalValue * 100,
-                                (fetchedData.reservationsByWeekday.lauantai || 0) / totalValue * 100,
-                                (fetchedData.reservationsByWeekday.sunnuntai || 0) / totalValue * 100,
-                            ],
-                        },
-                    ],
-                };
-                setChartData(updatedData);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const weekdays = [
+                        'maanantai', 'tiistai', 'keskiviikko',
+                        'torstai', 'perjantai', 'lauantai', 'sunnuntai'
+                    ];
+
+                    const reservations = data.reservationsByWeekday || {};
+                    const total = weekdays.reduce((acc, day) => acc + (reservations[day] || 0), 0);
+
+                    if (total > 0) {
+                        const percentages = weekdays.map(day =>
+                            ((reservations[day] || 0) / total) * 100
+                        );
+
+                        setChartData({
+                            labels: ['MA', 'TI', 'KE', 'TO', 'PE', 'LA', 'SU'],
+                            datasets: [{ data: percentages }]
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching usage statistics:", error);
             }
         };
 
         fetchData();
-    }, [companyId, resourceId]);
-
-    const fetchResource = async (companyId, resourceId) => {
-        try {
-            const docRef = doc(firestore, "companiestest", companyId, "resources", resourceId);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                const fetchedData = docSnap.data();
-                console.log("Resource data:", fetchedData);
-                return fetchedData;
-            } else {
-                console.log("No such document!");
-                return null;
-            }
-        } catch (error) {
-            console.error("Error fetching resource:", error);
-        }
-    };
+    }, [resource]);
 
     const chartConfig = {
         decimalPlaces: 0,
         backgroundGradientFrom: "#808080",
-        backgroundGradientFromOpacity: 1,
         backgroundGradientTo: "#808080",
-        backgroundGradientToOpacity: 1,
         color: () => `#ffffff`,
-        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,   // tän chart-kitin käyttö on aivan syvältä, ei hyvää päivää
+        labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
         strokeWidth: 16,
         barPercentage: 0.5,
         barRadius: 4,
@@ -109,7 +90,7 @@ export default function UsageStatistics() {
                 <View style={styles.modalView}></View>
 
                 <View>
-                    <Text>Resurssin päivittäinen käyttöaste</Text>
+                    <Text>Resurssin käyttöaste viikonpäivittäin</Text>
                     <View style={{ overflow: 'hidden', borderRadius: 8, }}>
                         <BarChart
                             data={chartData}
@@ -121,11 +102,16 @@ export default function UsageStatistics() {
                             chartConfig={chartConfig}
                         />
                     </View>
+                    <Pressable
+                style={[styles.graphButton]}
+                onPress={() => setModalVisible(!modalVisible)}>
+                <Text style={styles.formButtonText}>Sulje</Text>
+            </Pressable>
                 </View>
             </Modal>
 
             <Pressable
-                style={[styles.formButton]}
+                style={[styles.graphButton]}
                 onPress={() => setModalVisible(true)}>
                 <Text style={styles.formButtonText}>Käyttöastekuvaaja</Text>
             </Pressable>
@@ -167,6 +153,13 @@ const styles = StyleSheet.create({
     },
     formButton: {
         backgroundColor: "#ff6b6b",
+        borderRadius: 8,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        margin: 6,
+    },
+    graphButton: {
+        backgroundColor: "#A9A9A9",
         borderRadius: 8,
         paddingVertical: 10,
         paddingHorizontal: 16,

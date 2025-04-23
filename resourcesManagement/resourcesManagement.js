@@ -16,6 +16,7 @@ export default function ResourcesManagement() {
     const [items, setItems] = useState([])
 
     useEffect(() => {
+        console.log(MANAGEDRESOURCES)
         console.log("companyid: ", companyId)
         const q = query(collection(firestore, MANAGEDRESOURCES), orderBy('created', 'asc'))
         const unsubscribe = onSnapshot(q, (querySnapshot) => {
@@ -50,7 +51,8 @@ export default function ResourcesManagement() {
                 (item.enabledWeekdays.Sunday ? 'su ' : '')
             }</Text>
             <EditResourceModal item={item} />
-           
+            <UsageStatistics resource={{ ...item, companyId }} />
+
         </View>
     );
 
@@ -64,7 +66,6 @@ export default function ResourcesManagement() {
                 renderItem={renderItem}
             />
             <NewResourceModal />
-            <UsageStatistics />
         </View>
 
 
